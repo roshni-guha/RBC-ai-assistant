@@ -19,7 +19,9 @@ print(f"Company: {company_name}")
 print(f"Price: ${current_price}")
 print(f"Market Cap: ${market_cap:,.0f}")
 
-# Sales Growth (last 3 quarters Y/Y)
+# ============================================================
+# SALES GROWTH Y/Y (Last 3 Quarters)
+# ============================================================
 print(f"\n{'='*60}")
 print("SALES GROWTH Y/Y (Last 3 Quarters)")
 print(f"{'='*60}")
@@ -60,7 +62,9 @@ if 'Total Revenue' in income_statement.index:
             print(f"  Y/Y Growth: {growth_percentage:.2f}%")
             print()
 
-# FCF Growth (last 4 quarters)
+# ============================================================
+# FREE CASH FLOW GROWTH (Last 4 Quarters)
+# ============================================================
 print(f"{'='*60}")
 print("FREE CASH FLOW GROWTH (Last 4 Quarters)")
 print(f"{'='*60}")
@@ -93,7 +97,9 @@ if 'Free Cash Flow' in cashflow_statement.index:
             # Print results
             print(f"Q{i+1}: ${current_quarter_fcf:,.0f} | Y/Y Growth: {growth_percentage:.2f}%")
 
-# Gross Margins (last 4 quarters)
+# ============================================================
+# GROSS MARGINS (Last 4 Quarters)
+# ============================================================
 print(f"\n{'='*60}")
 print("GROSS MARGINS (Last 4 Quarters)")
 print(f"{'='*60}")
@@ -125,7 +131,9 @@ if 'Total Revenue' in income_statement.index and 'Gross Profit' in income_statem
             # Print result
             print(f"Q{i+1}: {gross_margin_percentage:.2f}%")
 
-# Earnings Surprise History
+# ============================================================
+# EARNINGS SURPRISE HISTORY
+# ============================================================
 print(f"\n{'='*60}")
 print("EARNINGS SURPRISE HISTORY")
 print(f"{'='*60}")
@@ -176,7 +184,9 @@ if earnings_data is not None and not earnings_data.empty:
                 # Increment counter
                 earnings_count += 1
 
-# Short Interest
+# ============================================================
+# SHORT INTEREST
+# ============================================================
 print(f"{'='*60}")
 print("SHORT INTEREST")
 print(f"{'='*60}")
@@ -199,18 +209,33 @@ if 'shortRatio' in stock_info:
     days_to_cover = stock_info['shortRatio']
     print(f"Days to Cover: {days_to_cover:.2f}")
 
-# Earnings Dates
+# ============================================================
+# EARNINGS DATES
+# ============================================================
 print(f"\n{'='*60}")
 print("EARNINGS DATES")
 print(f"{'='*60}")
-if earnings is not None:
-    for idx, row in earnings.iterrows():
-        if 'Reported EPS' in row and row['Reported EPS'] == row['Reported EPS']:
-            print(f"Previous Earnings: {idx.strftime('%Y-%m-%d')}")
-            break
-    for idx, row in earnings.iterrows():
-        if 'Reported EPS' in row and row['Reported EPS'] != row['Reported EPS']:  # NaN check
-            print(f"Next Earnings: {idx.strftime('%Y-%m-%d')}")
-            break
+
+# Check if earnings data exists
+if earnings_data is not None:
+    # Find previous earnings date (most recent with reported EPS)
+    for date, row in earnings_data.iterrows():
+        if 'Reported EPS' in row:
+            reported = row['Reported EPS']
+            # Check if reported EPS is not NaN (has been reported)
+            if reported == reported:  # NaN != NaN, so this checks if it's a real number
+                previous_earnings_date = date.strftime('%Y-%m-%d')
+                print(f"Previous Earnings: {previous_earnings_date}")
+                break
+
+    # Find next earnings date (future date with no reported EPS)
+    for date, row in earnings_data.iterrows():
+        if 'Reported EPS' in row:
+            reported = row['Reported EPS']
+            # Check if reported EPS is NaN (hasn't been reported yet)
+            if reported != reported:  # This is True when value is NaN
+                next_earnings_date = date.strftime('%Y-%m-%d')
+                print(f"Next Earnings: {next_earnings_date}")
+                break
 
 print(f"\n{'='*60}\n")
