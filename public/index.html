@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Research Analyst</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .search-box {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.4);
+        }
+
+        .btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .output {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+
+        .error {
+            background: #fff5f5;
+            color: #c53030;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #c53030;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #e2e8f0;
+            border: none;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>AI Research Analyst</h1>
+            <p>Get comprehensive financial data for any stock</p>
+        </div>
+
+        <div class="search-box">
+            <div class="input-group">
+                <input
+                    type="text"
+                    id="tickerInput"
+                    placeholder="Enter ticker symbol (e.g., AAPL, PLTR, MSFT)"
+                    onkeypress="if(event.key === 'Enter') getYahooData()"
+                >
+                <button class="btn btn-primary" onclick="getYahooData()" id="yahooBtn">
+                    Yahoo Finance Data
+                </button>
+                <button class="btn btn-secondary" onclick="getSecData()" id="secBtn">
+                    SEC Data
+                </button>
+            </div>
+        </div>
+
+        <div class="results" id="results">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('yahoo')">Yahoo Finance</button>
+                <button class="tab" onclick="switchTab('sec')">SEC Filings</button>
+            </div>
+
+            <div class="tab-content active" id="yahooContent"></div>
+            <div class="tab-content" id="secContent"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 'yahoo';
+
+        function switchTab(tab) {
+            currentTab = tab;
+
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tab + 'Content').classList.add('active');
+        }
+
+        function showLoading(tab) {
+            const content = document.getElementById(tab + 'Content');
+            content.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Fetching data...</p>
+                </div>
+            `;
+            document.getElementById('results').classList.add('show');
+        }
+
+        function showError(tab, message) {
+            const content = document.getElementById(tab + 'Content');
+            content.innerHTML = `
+                <div class="error">
+                    <h3>Error</h3>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+
+        function showOutput(tab, data) {
+            const content = document.getElementById(tab + 'Content');
+            content.innerHTML = `<div class="output">${data}</div>`;
+        }
+
+        async function getYahooData() {
+            const ticker = document.getElementById('tickerInput').value.trim().toUpperCase();
+
+            if (!ticker) {
+                alert('Please enter a ticker symbol');
+                return;
+            }
+
+            const yahooBtn = document.getElementById('yahooBtn');
+            yahooBtn.disabled = true;
+            yahooBtn.textContent = 'Loading...';
+
+            showLoading('yahoo');
+
+            try {
+                const response = await fetch('http://localhost:3000/api/stock-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ ticker })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showOutput('yahoo', result.data);
+                } else {
+                    showError('yahoo', result.error || 'Unknown error occurred');
+                }
+            } catch (error) {
+                showError('yahoo', 'Failed to fetch data: ' + error.message);
+            } finally {
+                yahooBtn.disabled = false;
+                yahooBtn.textContent = 'Yahoo Finance Data';
+            }
+        }
+
+        async function getSecData() {
+            const ticker = document.getElementById('tickerInput').value.trim().toUpperCase();
+
+            if (!ticker) {
+                alert('Please enter a ticker symbol');
+                return;
+            }
+
+            const secBtn = document.getElementById('secBtn');
+            secBtn.disabled = true;
+            secBtn.textContent = 'Loading...';
+
+            showLoading('sec');
+            switchTab('sec');
+
+            try {
+                const response = await fetch('http://localhost:3000/api/sec-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ ticker })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showOutput('sec', result.data);
+                } else {
+                    showError('sec', result.error || 'Unknown error occurred');
+                }
+            } catch (error) {
+                showError('sec', 'Failed to fetch data: ' + error.message);
+            } finally {
+                secBtn.disabled = false;
+                secBtn.textContent = 'SEC Data';
+            }
+        }
+    </script>
+</body>
+</html>
