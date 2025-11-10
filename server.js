@@ -20,17 +20,13 @@ app.post('/api/stock-data', (req, res) => {
         return res.status(400).json({ error: 'Ticker is required' });
     }
 
-    // Run the Python script
-    const pythonProcess = spawn('python', ['main.py'], {
+    // Run the Python script with ticker as argument
+    const pythonProcess = spawn('python', ['main.py', ticker], {
         stdio: ['pipe', 'pipe', 'pipe']
     });
 
     let outputData = '';
     let errorData = '';
-
-    // Send ticker to Python script
-    pythonProcess.stdin.write(ticker + '\n');
-    pythonProcess.stdin.end();
 
     // Collect output
     pythonProcess.stdout.on('data', (data) => {
@@ -97,6 +93,54 @@ app.post('/api/sec-data', (req, res) => {
             success: true,
             data: outputData
         });
+    });
+});
+
+// API endpoint to get chart data
+app.post('/api/chart-data', (req, res) => {
+    const { ticker, interval, period } = req.body;
+
+    if (!ticker) {
+        return res.status(400).json({ error: 'Ticker is required' });
+    }
+
+    const intervalParam = interval || '1d';
+    const periodParam = period || '1y';
+
+    // Run the chart data fetcher Python script
+    const pythonProcess = spawn('python', ['chart_data_fetcher.py', ticker, intervalParam, periodParam], {
+        stdio: ['pipe', 'pipe', 'pipe']
+    });
+
+    let outputData = '';
+    let errorData = '';
+
+    // Collect output
+    pythonProcess.stdout.on('data', (data) => {
+        outputData += data.toString();
+    });
+
+    pythonProcess.stderr.on('data', (data) => {
+        errorData += data.toString();
+    });
+
+    pythonProcess.on('close', (code) => {
+        if (code !== 0) {
+            return res.status(500).json({
+                error: 'Error fetching chart data',
+                details: errorData
+            });
+        }
+
+        try {
+            const chartData = JSON.parse(outputData);
+            res.json(chartData);
+        } catch (error) {
+            res.status(500).json({
+                error: 'Error parsing chart data',
+                details: error.message
+            });
+        }
     });
 });
 

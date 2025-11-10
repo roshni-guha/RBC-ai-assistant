@@ -1,8 +1,25 @@
 import yfinance as yf
 import json
+import sys
+import math
 
-# Get ticker from user
-ticker = input("Enter ticker symbol: ").strip().upper()
+def clean_data(obj):
+    """Recursively clean NaN and Inf values from data structure"""
+    if isinstance(obj, dict):
+        return {k: clean_data(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [clean_data(item) for item in obj]
+    elif isinstance(obj, float):
+        if math.isnan(obj) or math.isinf(obj):
+            return None
+        return obj
+    return obj
+
+# Get ticker from stdin or command line argument
+if len(sys.argv) > 1:
+    ticker = sys.argv[1].strip().upper()
+else:
+    ticker = input().strip().upper()
 
 # Create stock object
 stock = yf.Ticker(ticker)
@@ -156,5 +173,6 @@ if earningsData is not None:
                 data['earningsDates']['next'] = date.strftime('%Y-%m-%d')
                 break
 
-# Output JSON
-print(json.dumps(data, indent=2))
+# Clean NaN values and output JSON
+cleaned_data = clean_data(data)
+print(json.dumps(cleaned_data, indent=2))
