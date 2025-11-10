@@ -99,6 +99,17 @@
             box-shadow: 0 5px 15px rgba(72, 187, 120, 0.4);
         }
 
+        .btn-news {
+            background: #ed8936;
+            color: white;
+        }
+
+        .btn-news:hover {
+            background: #dd6b20;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(237, 137, 54, 0.4);
+        }
+
         .btn:disabled {
             background: #cbd5e0;
             cursor: not-allowed;
@@ -186,6 +197,56 @@
         .tab-content.active {
             display: block;
         }
+
+        .news-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .news-article {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            transition: transform 0.2s;
+        }
+
+        .news-article:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .news-article h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .news-article h3 a {
+            color: #2d3748;
+            text-decoration: none;
+        }
+
+        .news-article h3 a:hover {
+            color: #667eea;
+        }
+
+        .news-meta {
+            color: #718096;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+        }
+
+        .news-description {
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        .button-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
     </style>
 </head>
 <body>
@@ -203,11 +264,16 @@
                     placeholder="Enter ticker symbol (e.g., AAPL, PLTR, MSFT)"
                     onkeypress="if(event.key === 'Enter') getYahooData()"
                 >
+            </div>
+            <div class="button-row" style="margin-top: 15px;">
                 <button class="btn btn-primary" onclick="getYahooData()" id="yahooBtn">
                     Yahoo Finance Data
                 </button>
                 <button class="btn btn-secondary" onclick="getSecData()" id="secBtn">
                     SEC Data
+                </button>
+                <button class="btn btn-news" onclick="getNews()" id="newsBtn">
+                    Financial News
                 </button>
             </div>
         </div>
@@ -216,10 +282,12 @@
             <div class="tabs">
                 <button class="tab active" onclick="switchTab('yahoo')">Yahoo Finance</button>
                 <button class="tab" onclick="switchTab('sec')">SEC Filings</button>
+                <button class="tab" onclick="switchTab('news')">News</button>
             </div>
 
             <div class="tab-content active" id="yahooContent"></div>
             <div class="tab-content" id="secContent"></div>
+            <div class="tab-content" id="newsContent"></div>
         </div>
     </div>
 
@@ -343,6 +411,75 @@
                 secBtn.disabled = false;
                 secBtn.textContent = 'SEC Data';
             }
+        }
+
+        async function getNews() {
+            const ticker = document.getElementById('tickerInput').value.trim().toUpperCase();
+
+            if (!ticker) {
+                alert('Please enter a ticker symbol');
+                return;
+            }
+
+            const newsBtn = document.getElementById('newsBtn');
+            newsBtn.disabled = true;
+            newsBtn.textContent = 'Loading...';
+
+            showLoading('news');
+            switchTab('news');
+
+            try {
+                const response = await fetch('http://localhost:3000/api/news', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ ticker })
+                });
+
+                const result = await response.json();
+
+                if (result.success && result.articles) {
+                    showNews(result.articles);
+                } else {
+                    showError('news', result.error || 'No news articles found');
+                }
+            } catch (error) {
+                showError('news', 'Failed to fetch news: ' + error.message);
+            } finally {
+                newsBtn.disabled = false;
+                newsBtn.textContent = 'Financial News';
+            }
+        }
+
+        function showNews(articles) {
+            const content = document.getElementById('newsContent');
+
+            if (!articles || articles.length === 0) {
+                content.innerHTML = '<p>No news articles found.</p>';
+                return;
+            }
+
+            let html = '<div class="news-grid">';
+
+            articles.forEach(article => {
+                const publishedDate = new Date(article.publishedAt).toLocaleDateString();
+
+                html += `
+                    <div class="news-article">
+                        <h3><a href="${article.url}" target="_blank">${article.title}</a></h3>
+                        <div class="news-meta">
+                            ${article.source} | ${publishedDate}
+                        </div>
+                        <div class="news-description">
+                            ${article.description || 'No description available.'}
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            content.innerHTML = html;
         }
     </script>
 </body>
