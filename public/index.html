@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Research Analyst</title>
+    <title>Trading Terminal</title>
     <style>
         * {
             margin: 0;
@@ -12,336 +12,1618 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #0d0d0d;
+            color: #e1e1e1;
+            overflow: hidden;
+            height: 100vh;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 40px;
-        }
-
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
-
-        .search-box {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            margin-bottom: 30px;
-        }
-
-        .input-group {
+        /* Top Toolbar */
+        .top-toolbar {
+            background: #1a1a1a;
+            border-bottom: 1px solid #2a2a2a;
+            padding: 8px 12px;
             display: flex;
-            gap: 15px;
             align-items: center;
+            gap: 16px;
+            height: 48px;
         }
 
-        input[type="text"] {
-            flex: 1;
-            padding: 15px 20px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
+        .logo {
+            font-weight: 700;
+            font-size: 14px;
+            color: #4a9eff;
+            letter-spacing: 0.5px;
+            padding-right: 16px;
+            border-right: 1px solid #2a2a2a;
         }
 
-        input[type="text"]:focus {
+        .symbol-search {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .symbol-input {
+            background: #0d0d0d;
+            border: 1px solid #3a3a3a;
+            color: #e1e1e1;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            width: 100px;
+            text-transform: uppercase;
+        }
+
+        .symbol-input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #4a9eff;
         }
 
-        .btn {
-            padding: 15px 30px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
+        .toolbar-btn {
+            background: #2a2a2a;
+            border: 1px solid #3a3a3a;
+            color: #e1e1e1;
+            padding: 5px 12px;
+            border-radius: 3px;
+            font-size: 11px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
         }
 
-        .btn-primary {
-            background: #667eea;
-            color: white;
+        .toolbar-btn:hover {
+            background: #3a3a3a;
+            border-color: #4a9eff;
         }
 
-        .btn-primary:hover {
-            background: #5568d3;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        .toolbar-btn.active {
+            background: #4a9eff;
+            border-color: #4a9eff;
+            color: #0d0d0d;
         }
 
-        .btn-secondary {
-            background: #48bb78;
-            color: white;
+        .toolbar-divider {
+            width: 1px;
+            height: 24px;
+            background: #2a2a2a;
         }
 
-        .btn-secondary:hover {
-            background: #38a169;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.4);
+        /* Main Dashboard Layout */
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 260px 1fr 280px;
+            grid-template-rows: 1fr auto;
+            height: calc(100vh - 48px);
+            gap: 1px;
+            background: #0d0d0d;
         }
 
-        .btn:disabled {
-            background: #cbd5e0;
-            cursor: not-allowed;
-            transform: none;
+        /* Left Sidebar - Watchlist */
+        .left-panel {
+            background: #1a1a1a;
+            border-right: 1px solid #2a2a2a;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
-        .results {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            display: none;
+        .panel-header {
+            padding: 10px 12px;
+            background: #0d0d0d;
+            border-bottom: 1px solid #2a2a2a;
+            font-size: 11px;
+            font-weight: 600;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .results.show {
-            display: block;
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
         }
 
+        /* Center Area */
+        .center-area {
+            display: grid;
+            grid-template-rows: 1fr 220px;
+            gap: 1px;
+            background: #0d0d0d;
+        }
+
+        /* Chart Area */
+        .chart-container {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-tabs {
+            display: flex;
+            gap: 2px;
+            background: #0d0d0d;
+            padding: 0 8px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .chart-tab {
+            padding: 8px 12px;
+            font-size: 11px;
+            color: #888;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .chart-tab:hover {
+            color: #e1e1e1;
+        }
+
+        .chart-tab.active {
+            color: #4a9eff;
+            border-bottom-color: #4a9eff;
+        }
+
+        .chart-view {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .chart-view.chart-mode {
+            padding: 0;
+            overflow: hidden;
+        }
+
+        /* Bottom Panel - Order Entry & Stats */
+        .bottom-panel {
+            background: #1a1a1a;
+            border-top: 1px solid #2a2a2a;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+        }
+
+        .bottom-section {
+            padding: 12px;
+            overflow-y: auto;
+        }
+
+        /* Right Sidebar - Account & Positions */
+        .right-panel {
+            background: #1a1a1a;
+            border-left: 1px solid #2a2a2a;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Data Cards */
+        .data-card {
+            background: #0d0d0d;
+            border: 1px solid #2a2a2a;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 8px;
+        }
+
+        .data-card-title {
+            font-size: 10px;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .data-card-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #e1e1e1;
+        }
+
+        .data-card-value.positive {
+            color: #26a69a;
+        }
+
+        .data-card-value.negative {
+            color: #ef5350;
+        }
+
+        .data-card-subtitle {
+            font-size: 11px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        /* Metric Grid */
+        .metric-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .metric-item {
+            background: #0d0d0d;
+            padding: 8px;
+            border-radius: 3px;
+            border: 1px solid #2a2a2a;
+        }
+
+        .metric-label {
+            font-size: 9px;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .metric-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: #e1e1e1;
+        }
+
+        /* Data Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 6px 8px;
+            background: #0d0d0d;
+            color: #888;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 9px;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .data-table td {
+            padding: 6px 8px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .data-table tr:hover {
+            background: rgba(74, 158, 255, 0.05);
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 2px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .badge-positive {
+            background: rgba(38, 166, 154, 0.15);
+            color: #26a69a;
+        }
+
+        .badge-negative {
+            background: rgba(239, 83, 80, 0.15);
+            color: #ef5350;
+        }
+
+        .badge-neutral {
+            background: rgba(74, 158, 255, 0.15);
+            color: #4a9eff;
+        }
+
+        /* News Item */
+        .news-item {
+            background: #0d0d0d;
+            padding: 10px;
+            border-radius: 3px;
+            margin-bottom: 8px;
+            border-left: 3px solid #4a9eff;
+        }
+
+        .news-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #e1e1e1;
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+
+        .news-title a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .news-title a:hover {
+            color: #4a9eff;
+        }
+
+        .news-meta {
+            font-size: 10px;
+            color: #666;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0d0d0d;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #2a2a2a;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3a3a3a;
+        }
+
+        /* Loading */
         .loading {
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 40px;
-            color: #667eea;
+            color: #888;
+            font-size: 12px;
         }
 
         .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
+            width: 24px;
+            height: 24px;
+            border: 2px solid #2a2a2a;
+            border-top-color: #4a9eff;
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            to { transform: rotate(360deg); }
         }
 
-        .output {
-            background: #1a202c;
-            color: #e2e8f0;
-            padding: 20px;
-            border-radius: 8px;
-            font-family: 'Monaco', 'Courier New', monospace;
-            font-size: 0.9rem;
-            line-height: 1.6;
-            white-space: pre-wrap;
-            overflow-x: auto;
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
         }
 
-        .error {
-            background: #fff5f5;
-            color: #c53030;
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 4px solid #c53030;
+        .empty-state-icon {
+            font-size: 36px;
+            margin-bottom: 12px;
+            opacity: 0.3;
         }
 
-        .tabs {
+        .empty-state-text {
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+
+        .empty-state-subtext {
+            font-size: 11px;
+            color: #555;
+        }
+
+        /* Account Stats */
+        .account-stat {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #2a2a2a;
         }
 
-        .tab {
-            padding: 10px 20px;
-            background: #e2e8f0;
-            border: none;
-            border-radius: 8px 8px 0 0;
-            cursor: pointer;
+        .account-stat:last-child {
+            border-bottom: none;
+        }
+
+        .account-stat-label {
+            font-size: 11px;
+            color: #888;
+        }
+
+        .account-stat-value {
+            font-size: 12px;
             font-weight: 600;
-            transition: all 0.3s;
+            color: #e1e1e1;
         }
 
-        .tab.active {
-            background: #667eea;
-            color: white;
+        /* Section Divider */
+        .section-divider {
+            height: 1px;
+            background: #2a2a2a;
+            margin: 12px 0;
+        }
+        /* Chart specific styles */
+        #tradingViewChart {
+            width: 100%;
+            height: 100%;
+            position: relative;
         }
 
-        .tab-content {
+        .chart-controls {
+            display: flex;
+            gap: 8px;
+            padding: 8px;
+            background: #0d0d0d;
+            border-bottom: 1px solid #2a2a2a;
+            align-items: center;
+        }
+
+        .chart-control-group {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .chart-control-label {
+            font-size: 10px;
+            color: #888;
+            text-transform: uppercase;
+            margin-right: 4px;
+        }
+
+        .chart-btn {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            color: #888;
+            padding: 4px 8px;
+            border-radius: 2px;
+            font-size: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .chart-btn:hover {
+            background: #2a2a2a;
+            color: #e1e1e1;
+        }
+
+        .chart-btn.active {
+            background: #4a9eff;
+            border-color: #4a9eff;
+            color: #0d0d0d;
+        }
+
+        .chart-tooltip {
+            position: absolute;
+            background: rgba(13, 13, 13, 0.95);
+            border: 1px solid #2a2a2a;
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-size: 11px;
+            pointer-events: none;
+            z-index: 1000;
             display: none;
         }
 
-        .tab-content.active {
-            display: block;
+        .chart-tooltip-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 4px;
+        }
+
+        .chart-tooltip-label {
+            color: #888;
+        }
+
+        .chart-tooltip-value {
+            color: #e1e1e1;
+            font-weight: 600;
+        }
+
+        .indicator-panel {
+            background: #0d0d0d;
+            border: 1px solid #2a2a2a;
+            border-radius: 4px;
+            padding: 8px;
+            margin-top: 8px;
+        }
+
+        .indicator-header {
+            font-size: 10px;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .indicator-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .indicator-checkbox {
+            width: 14px;
+            height: 14px;
+            cursor: pointer;
+        }
+
+        .indicator-label {
+            font-size: 11px;
+            color: #e1e1e1;
+            cursor: pointer;
+        }
+
+        .chart-legend {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(13, 13, 13, 0.8);
+            border: 1px solid #2a2a2a;
+            border-radius: 3px;
+            padding: 6px 10px;
+            font-size: 10px;
+            color: #888;
+            z-index: 100;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 3px;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 2px;
         }
     </style>
+
+    <!-- Lightweight Charts Library -->
+    <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>AI Research Analyst</h1>
-            <p>Get comprehensive financial data for any stock</p>
+    <!-- Top Toolbar -->
+    <div class="top-toolbar">
+        <div class="logo">TRADING TERMINAL</div>
+        <div class="symbol-search">
+            <input type="text" id="tickerInput" class="symbol-input" placeholder="Symbol" onkeypress="if(event.key === 'Enter') loadAllData()">
+            <button class="toolbar-btn" onclick="loadAllData()">Load</button>
         </div>
+        <div class="toolbar-divider"></div>
+        <button class="toolbar-btn" onclick="refreshData()">Refresh</button>
+        <button class="toolbar-btn" id="autoRefreshBtn" onclick="toggleAutoRefresh()">Auto-Refresh: OFF</button>
+    </div>
 
-        <div class="search-box">
-            <div class="input-group">
-                <input
-                    type="text"
-                    id="tickerInput"
-                    placeholder="Enter ticker symbol (e.g., AAPL, PLTR, MSFT)"
-                    onkeypress="if(event.key === 'Enter') getYahooData()"
-                >
-                <button class="btn btn-primary" onclick="getYahooData()" id="yahooBtn">
-                    Yahoo Finance Data
-                </button>
-                <button class="btn btn-secondary" onclick="getSecData()" id="secBtn">
-                    SEC Data
-                </button>
+    <!-- Main Dashboard -->
+    <div class="dashboard-container">
+        <!-- Left Panel - Watchlist & Market Movers -->
+        <div class="left-panel">
+            <div class="panel-header">Quick Stats</div>
+            <div class="panel-content" id="quickStats">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📊</div>
+                    <div class="empty-state-text">No symbol loaded</div>
+                    <div class="empty-state-subtext">Enter a ticker to view stats</div>
+                </div>
             </div>
         </div>
 
-        <div class="results" id="results">
-            <div class="tabs">
-                <button class="tab active" onclick="switchTab('yahoo')">Yahoo Finance</button>
-                <button class="tab" onclick="switchTab('sec')">SEC Filings</button>
+        <!-- Center Area - Charts & Data -->
+        <div class="center-area">
+            <!-- Chart Area -->
+            <div class="chart-container">
+                <div class="chart-tabs">
+                    <div class="chart-tab active" onclick="switchChartTab('chart')">Chart</div>
+                    <div class="chart-tab" onclick="switchChartTab('overview')">Overview</div>
+                    <div class="chart-tab" onclick="switchChartTab('growth')">Growth</div>
+                    <div class="chart-tab" onclick="switchChartTab('earnings')">Earnings</div>
+                    <div class="chart-tab" onclick="switchChartTab('sec')">SEC Filings</div>
+                </div>
+                <div class="chart-controls" id="chartControls" style="display: flex;">
+                    <div class="chart-control-group">
+                        <span class="chart-control-label">Timeframe:</span>
+                        <button class="chart-btn" onclick="changeTimeframe('1d', '1d')">1D</button>
+                        <button class="chart-btn" onclick="changeTimeframe('5d', '5m')">5D</button>
+                        <button class="chart-btn" onclick="changeTimeframe('1mo', '1h')">1M</button>
+                        <button class="chart-btn" onclick="changeTimeframe('3mo', '1d')">3M</button>
+                        <button class="chart-btn active" onclick="changeTimeframe('1y', '1d')">1Y</button>
+                        <button class="chart-btn" onclick="changeTimeframe('5y', '1wk')">5Y</button>
+                        <button class="chart-btn" onclick="changeTimeframe('max', '1mo')">MAX</button>
+                    </div>
+                    <div class="toolbar-divider"></div>
+                    <div class="chart-control-group">
+                        <span class="chart-control-label">Indicators:</span>
+                        <button class="chart-btn" onclick="toggleIndicator('sma20')">SMA 20</button>
+                        <button class="chart-btn" onclick="toggleIndicator('sma50')">SMA 50</button>
+                        <button class="chart-btn" onclick="toggleIndicator('sma200')">SMA 200</button>
+                        <button class="chart-btn" onclick="toggleIndicator('ema12')">EMA 12</button>
+                        <button class="chart-btn" onclick="toggleIndicator('ema26')">EMA 26</button>
+                        <button class="chart-btn" onclick="toggleIndicator('bb')">Bollinger</button>
+                    </div>
+                    <div class="toolbar-divider"></div>
+                    <div class="chart-control-group">
+                        <span class="chart-control-label">Studies:</span>
+                        <button class="chart-btn active" onclick="toggleStudy('volume')">Volume</button>
+                        <button class="chart-btn" onclick="toggleStudy('rsi')">RSI</button>
+                        <button class="chart-btn" onclick="toggleStudy('macd')">MACD</button>
+                    </div>
+                </div>
+                <div class="chart-view chart-mode" id="chartView">
+                    <div id="tradingViewChart">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📈</div>
+                            <div class="empty-state-text">No chart loaded</div>
+                            <div class="empty-state-subtext">Enter a ticker symbol and click Load</div>
+                        </div>
+                    </div>
+                    <div class="chart-tooltip" id="chartTooltip"></div>
+                </div>
             </div>
 
-            <div class="tab-content active" id="yahooContent"></div>
-            <div class="tab-content" id="secContent"></div>
+            <!-- Bottom Panel - Order Entry & Stats -->
+            <div class="bottom-panel">
+                <div class="bottom-section">
+                    <div class="panel-header">Company Information</div>
+                    <div id="companyInfo">
+                        <div class="empty-state">
+                            <div class="empty-state-text">No company info</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bottom-section">
+                    <div class="panel-header">Short Interest & Dates</div>
+                    <div id="shortInfo">
+                        <div class="empty-state">
+                            <div class="empty-state-text">No short interest data</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel - Account & Positions -->
+        <div class="right-panel">
+            <div class="panel-header">Latest News</div>
+            <div class="panel-content" id="newsPanel">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📰</div>
+                    <div class="empty-state-text">No news</div>
+                    <div class="empty-state-subtext">Load a ticker to view news</div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        let currentTab = 'yahoo';
+        let currentTicker = null;
+        let currentData = null;
+        let currentSecData = null;
+        let currentChartTab = 'chart';
+        let autoRefreshInterval = null;
 
-        function switchTab(tab) {
-            currentTab = tab;
+        // Chart variables
+        let chart = null;
+        let candlestickSeries = null;
+        let volumeSeries = null;
+        let rsiChart = null;
+        let rsiSeries = null;
+        let macdChart = null;
+        let macdSeries = null;
+        let macdSignalSeries = null;
+        let macdHistogramSeries = null;
+        let currentChartData = null;
+        let currentPeriod = '1y';
+        let currentInterval = '1d';
+        let activeIndicators = new Set();
+        let activeStudies = new Set(['volume']);
+        let indicatorSeries = {};
 
-            // Update tab buttons
-            document.querySelectorAll('.tab').forEach(btn => {
-                btn.classList.remove('active');
+        // Chart theme configuration
+        const chartTheme = {
+            layout: {
+                background: { color: '#1a1a1a' },
+                textColor: '#888',
+            },
+            grid: {
+                vertLines: { color: '#2a2a2a' },
+                horzLines: { color: '#2a2a2a' },
+            },
+            crosshair: {
+                mode: LightweightCharts.CrosshairMode.Normal,
+                vertLine: {
+                    color: '#4a9eff',
+                    width: 1,
+                    style: LightweightCharts.LineStyle.Dashed,
+                },
+                horzLine: {
+                    color: '#4a9eff',
+                    width: 1,
+                    style: LightweightCharts.LineStyle.Dashed,
+                },
+            },
+            timeScale: {
+                borderColor: '#2a2a2a',
+                timeVisible: true,
+                secondsVisible: false,
+            },
+            rightPriceScale: {
+                borderColor: '#2a2a2a',
+            },
+        };
+
+        function initializeChart() {
+            const container = document.getElementById('tradingViewChart');
+            if (!container) return;
+
+            // Clear existing charts
+            if (chart) {
+                chart.remove();
+                chart = null;
+            }
+            if (rsiChart) {
+                rsiChart.remove();
+                rsiChart = null;
+            }
+            if (macdChart) {
+                macdChart.remove();
+                macdChart = null;
+            }
+
+            container.innerHTML = '';
+
+            // Calculate heights for chart panels
+            const containerHeight = container.clientHeight;
+            const studyCount = activeStudies.size;
+            const mainChartHeight = studyCount > 0 ? containerHeight * 0.6 : containerHeight;
+            const studyHeight = studyCount > 0 ? (containerHeight * 0.4) / studyCount : 0;
+
+            // Create main chart
+            const mainChartDiv = document.createElement('div');
+            mainChartDiv.id = 'mainChart';
+            mainChartDiv.style.height = `${mainChartHeight}px`;
+            container.appendChild(mainChartDiv);
+
+            chart = LightweightCharts.createChart(mainChartDiv, {
+                ...chartTheme,
+                width: container.clientWidth,
+                height: mainChartHeight,
             });
+
+            // Create candlestick series
+            candlestickSeries = chart.addCandlestickSeries({
+                upColor: '#26a69a',
+                downColor: '#ef5350',
+                borderUpColor: '#26a69a',
+                borderDownColor: '#ef5350',
+                wickUpColor: '#26a69a',
+                wickDownColor: '#ef5350',
+            });
+
+            // Add crosshair move handler for tooltip
+            chart.subscribeCrosshairMove(handleCrosshairMove);
+
+            // Create volume chart if enabled
+            if (activeStudies.has('volume')) {
+                const volumeDiv = document.createElement('div');
+                volumeDiv.id = 'volumeChart';
+                volumeDiv.style.height = `${studyHeight}px`;
+                volumeDiv.style.marginTop = '1px';
+                container.appendChild(volumeDiv);
+
+                const volumeChart = LightweightCharts.createChart(volumeDiv, {
+                    ...chartTheme,
+                    width: container.clientWidth,
+                    height: studyHeight,
+                });
+
+                volumeSeries = volumeChart.addHistogramSeries({
+                    color: '#26a69a',
+                    priceFormat: {
+                        type: 'volume',
+                    },
+                    priceScaleId: '',
+                });
+
+                volumeChart.priceScale('').applyOptions({
+                    scaleMargins: {
+                        top: 0.8,
+                        bottom: 0,
+                    },
+                });
+
+                // Sync time scales
+                chart.timeScale().subscribeVisibleTimeRangeChange(() => {
+                    volumeChart.timeScale().setVisibleRange(chart.timeScale().getVisibleRange());
+                });
+            }
+
+            // Create RSI chart if enabled
+            if (activeStudies.has('rsi')) {
+                const rsiDiv = document.createElement('div');
+                rsiDiv.id = 'rsiChart';
+                rsiDiv.style.height = `${studyHeight}px`;
+                rsiDiv.style.marginTop = '1px';
+                container.appendChild(rsiDiv);
+
+                rsiChart = LightweightCharts.createChart(rsiDiv, {
+                    ...chartTheme,
+                    width: container.clientWidth,
+                    height: studyHeight,
+                });
+
+                rsiSeries = rsiChart.addLineSeries({
+                    color: '#f48fb1',
+                    lineWidth: 2,
+                });
+
+                // Add RSI reference lines at 30 and 70
+                const rsiOverbought = rsiChart.addLineSeries({
+                    color: '#ef5350',
+                    lineWidth: 1,
+                    lineStyle: LightweightCharts.LineStyle.Dashed,
+                    lastValueVisible: false,
+                    priceLineVisible: false,
+                });
+
+                const rsiOversold = rsiChart.addLineSeries({
+                    color: '#26a69a',
+                    lineWidth: 1,
+                    lineStyle: LightweightCharts.LineStyle.Dashed,
+                    lastValueVisible: false,
+                    priceLineVisible: false,
+                });
+
+                // Sync time scales
+                chart.timeScale().subscribeVisibleTimeRangeChange(() => {
+                    rsiChart.timeScale().setVisibleRange(chart.timeScale().getVisibleRange());
+                });
+            }
+
+            // Create MACD chart if enabled
+            if (activeStudies.has('macd')) {
+                const macdDiv = document.createElement('div');
+                macdDiv.id = 'macdChart';
+                macdDiv.style.height = `${studyHeight}px`;
+                macdDiv.style.marginTop = '1px';
+                container.appendChild(macdDiv);
+
+                macdChart = LightweightCharts.createChart(macdDiv, {
+                    ...chartTheme,
+                    width: container.clientWidth,
+                    height: studyHeight,
+                });
+
+                macdHistogramSeries = macdChart.addHistogramSeries({
+                    color: '#26a69a',
+                });
+
+                macdSeries = macdChart.addLineSeries({
+                    color: '#2196F3',
+                    lineWidth: 2,
+                });
+
+                macdSignalSeries = macdChart.addLineSeries({
+                    color: '#ff6d00',
+                    lineWidth: 2,
+                });
+
+                // Sync time scales
+                chart.timeScale().subscribeVisibleTimeRangeChange(() => {
+                    macdChart.timeScale().setVisibleRange(chart.timeScale().getVisibleRange());
+                });
+            }
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                if (chart) {
+                    chart.applyOptions({ width: container.clientWidth });
+                }
+                if (rsiChart) {
+                    rsiChart.applyOptions({ width: container.clientWidth });
+                }
+                if (macdChart) {
+                    macdChart.applyOptions({ width: container.clientWidth });
+                }
+            });
+        }
+
+        function handleCrosshairMove(param) {
+            const tooltip = document.getElementById('chartTooltip');
+            if (!param.time || !param.point || !currentChartData) {
+                tooltip.style.display = 'none';
+                return;
+            }
+
+            const data = param.seriesData.get(candlestickSeries);
+            if (!data) {
+                tooltip.style.display = 'none';
+                return;
+            }
+
+            const date = new Date(param.time * 1000);
+            const dateStr = date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: currentInterval.includes('m') || currentInterval.includes('h') ? 'numeric' : undefined,
+                minute: currentInterval.includes('m') ? 'numeric' : undefined
+            });
+
+            let tooltipHtml = `
+                <div class="chart-tooltip-row">
+                    <span class="chart-tooltip-label">Date:</span>
+                    <span class="chart-tooltip-value">${dateStr}</span>
+                </div>
+                <div class="chart-tooltip-row">
+                    <span class="chart-tooltip-label">Open:</span>
+                    <span class="chart-tooltip-value">$${data.open.toFixed(2)}</span>
+                </div>
+                <div class="chart-tooltip-row">
+                    <span class="chart-tooltip-label">High:</span>
+                    <span class="chart-tooltip-value">$${data.high.toFixed(2)}</span>
+                </div>
+                <div class="chart-tooltip-row">
+                    <span class="chart-tooltip-label">Low:</span>
+                    <span class="chart-tooltip-value">$${data.low.toFixed(2)}</span>
+                </div>
+                <div class="chart-tooltip-row">
+                    <span class="chart-tooltip-label">Close:</span>
+                    <span class="chart-tooltip-value">$${data.close.toFixed(2)}</span>
+                </div>
+            `;
+
+            // Add volume if available
+            if (currentChartData.volume) {
+                const volumeData = currentChartData.volume.find(v => v.time === param.time);
+                if (volumeData) {
+                    const volumeStr = volumeData.value >= 1e6
+                        ? (volumeData.value / 1e6).toFixed(2) + 'M'
+                        : (volumeData.value / 1e3).toFixed(2) + 'K';
+                    tooltipHtml += `
+                        <div class="chart-tooltip-row">
+                            <span class="chart-tooltip-label">Volume:</span>
+                            <span class="chart-tooltip-value">${volumeStr}</span>
+                        </div>
+                    `;
+                }
+            }
+
+            tooltip.innerHTML = tooltipHtml;
+            tooltip.style.display = 'block';
+            tooltip.style.left = param.point.x + 20 + 'px';
+            tooltip.style.top = param.point.y + 'px';
+        }
+
+        async function loadChartData(ticker = currentTicker, period = currentPeriod, interval = currentInterval) {
+            if (!ticker) {
+                console.log('No ticker provided to loadChartData');
+                return;
+            }
+
+            console.log(`Loading chart data for ${ticker}, period: ${period}, interval: ${interval}`);
+
+            try {
+                const response = await fetch('http://localhost:3000/api/chart-data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ticker, interval, period })
+                });
+
+                const result = await response.json();
+                console.log('Chart data response:', result);
+
+                if (result.success) {
+                    currentChartData = result;
+                    currentTicker = ticker;
+                    currentPeriod = period;
+                    currentInterval = interval;
+
+                    // Initialize chart if needed
+                    if (!chart) {
+                        console.log('Initializing chart...');
+                        initializeChart();
+                    }
+
+                    // Update candlestick data
+                    if (candlestickSeries && result.candlesticks) {
+                        console.log('Setting candlestick data:', result.candlesticks.length, 'candles');
+                        candlestickSeries.setData(result.candlesticks);
+                    }
+
+                    // Update volume data
+                    if (volumeSeries && result.volume) {
+                        console.log('Setting volume data');
+                        volumeSeries.setData(result.volume);
+                    }
+
+                    // Update RSI data
+                    if (rsiSeries && result.indicators && result.indicators.rsi) {
+                        console.log('Setting RSI data');
+                        rsiSeries.setData(result.indicators.rsi);
+                    }
+
+                    // Update MACD data
+                    if (macdSeries && result.indicators && result.indicators.macd) {
+                        console.log('Setting MACD data');
+                        macdSeries.setData(result.indicators.macd);
+                        macdSignalSeries.setData(result.indicators.macdSignal);
+                        macdHistogramSeries.setData(result.indicators.macdHistogram);
+                    }
+
+                    // Update active indicators
+                    updateIndicators();
+
+                    // Fit content
+                    if (chart) {
+                        chart.timeScale().fitContent();
+                    }
+
+                    console.log('Chart data loaded successfully');
+                } else {
+                    console.error('Error loading chart data:', result.error);
+                    const chartView = document.getElementById('chartView');
+                    chartView.innerHTML = `<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-text">Error loading chart data</div><div class="empty-state-subtext">${result.error}</div></div>`;
+                }
+            } catch (error) {
+                console.error('Error fetching chart data:', error);
+                const chartView = document.getElementById('chartView');
+                chartView.innerHTML = `<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-text">Error fetching chart data</div><div class="empty-state-subtext">${error.message}</div></div>`;
+            }
+        }
+
+        function changeTimeframe(period, interval) {
+            // Update active button
+            document.querySelectorAll('.chart-controls .chart-btn').forEach(btn => {
+                if (btn.textContent === period.toUpperCase() ||
+                    btn.textContent === period.replace('mo', 'M').replace('wk', 'W').toUpperCase()) {
+                    btn.classList.add('active');
+                } else if (btn.onclick && btn.onclick.toString().includes('changeTimeframe')) {
+                    btn.classList.remove('active');
+                }
+            });
+
+            loadChartData(currentTicker, period, interval);
+        }
+
+        function toggleIndicator(indicator) {
+            const button = event.target;
+
+            if (activeIndicators.has(indicator)) {
+                activeIndicators.delete(indicator);
+                button.classList.remove('active');
+
+                // Remove indicator series
+                if (indicatorSeries[indicator]) {
+                    chart.removeSeries(indicatorSeries[indicator]);
+                    delete indicatorSeries[indicator];
+
+                    // Handle Bollinger Bands (3 lines)
+                    if (indicator === 'bb') {
+                        if (indicatorSeries['bbUpper']) {
+                            chart.removeSeries(indicatorSeries['bbUpper']);
+                            delete indicatorSeries['bbUpper'];
+                        }
+                        if (indicatorSeries['bbLower']) {
+                            chart.removeSeries(indicatorSeries['bbLower']);
+                            delete indicatorSeries['bbLower'];
+                        }
+                    }
+                }
+            } else {
+                activeIndicators.add(indicator);
+                button.classList.add('active');
+                updateIndicators();
+            }
+        }
+
+        function toggleStudy(study) {
+            const button = event.target;
+
+            if (activeStudies.has(study)) {
+                activeStudies.delete(study);
+                button.classList.remove('active');
+            } else {
+                activeStudies.add(study);
+                button.classList.add('active');
+            }
+
+            // Reinitialize chart with new studies
+            initializeChart();
+            if (currentChartData) {
+                loadChartData(currentTicker, currentPeriod, currentInterval);
+            }
+        }
+
+        function updateIndicators() {
+            if (!currentChartData || !currentChartData.indicators || !chart) return;
+
+            const indicators = currentChartData.indicators;
+
+            // SMA 20
+            if (activeIndicators.has('sma20') && indicators.sma20) {
+                if (!indicatorSeries['sma20']) {
+                    indicatorSeries['sma20'] = chart.addLineSeries({
+                        color: '#2196F3',
+                        lineWidth: 2,
+                        title: 'SMA 20',
+                    });
+                }
+                indicatorSeries['sma20'].setData(indicators.sma20);
+            }
+
+            // SMA 50
+            if (activeIndicators.has('sma50') && indicators.sma50) {
+                if (!indicatorSeries['sma50']) {
+                    indicatorSeries['sma50'] = chart.addLineSeries({
+                        color: '#ff6d00',
+                        lineWidth: 2,
+                        title: 'SMA 50',
+                    });
+                }
+                indicatorSeries['sma50'].setData(indicators.sma50);
+            }
+
+            // SMA 200
+            if (activeIndicators.has('sma200') && indicators.sma200) {
+                if (!indicatorSeries['sma200']) {
+                    indicatorSeries['sma200'] = chart.addLineSeries({
+                        color: '#9c27b0',
+                        lineWidth: 2,
+                        title: 'SMA 200',
+                    });
+                }
+                indicatorSeries['sma200'].setData(indicators.sma200);
+            }
+
+            // EMA 12
+            if (activeIndicators.has('ema12') && indicators.ema12) {
+                if (!indicatorSeries['ema12']) {
+                    indicatorSeries['ema12'] = chart.addLineSeries({
+                        color: '#00bcd4',
+                        lineWidth: 2,
+                        title: 'EMA 12',
+                    });
+                }
+                indicatorSeries['ema12'].setData(indicators.ema12);
+            }
+
+            // EMA 26
+            if (activeIndicators.has('ema26') && indicators.ema26) {
+                if (!indicatorSeries['ema26']) {
+                    indicatorSeries['ema26'] = chart.addLineSeries({
+                        color: '#ffc107',
+                        lineWidth: 2,
+                        title: 'EMA 26',
+                    });
+                }
+                indicatorSeries['ema26'].setData(indicators.ema26);
+            }
+
+            // Bollinger Bands
+            if (activeIndicators.has('bb') && indicators.bbUpper && indicators.bbMiddle && indicators.bbLower) {
+                if (!indicatorSeries['bbUpper']) {
+                    indicatorSeries['bbUpper'] = chart.addLineSeries({
+                        color: '#f48fb1',
+                        lineWidth: 1,
+                        lineStyle: LightweightCharts.LineStyle.Dashed,
+                        title: 'BB Upper',
+                    });
+                }
+                if (!indicatorSeries['bb']) {
+                    indicatorSeries['bb'] = chart.addLineSeries({
+                        color: '#f48fb1',
+                        lineWidth: 2,
+                        title: 'BB Middle',
+                    });
+                }
+                if (!indicatorSeries['bbLower']) {
+                    indicatorSeries['bbLower'] = chart.addLineSeries({
+                        color: '#f48fb1',
+                        lineWidth: 1,
+                        lineStyle: LightweightCharts.LineStyle.Dashed,
+                        title: 'BB Lower',
+                    });
+                }
+                indicatorSeries['bbUpper'].setData(indicators.bbUpper);
+                indicatorSeries['bb'].setData(indicators.bbMiddle);
+                indicatorSeries['bbLower'].setData(indicators.bbLower);
+            }
+        }
+
+        function formatCurrency(value) {
+            if (value === 'N/A' || !value) return 'N/A';
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(value);
+        }
+
+        function formatLargeNumber(value) {
+            if (value === 'N/A' || !value) return 'N/A';
+            if (value >= 1e12) return '$' + (value / 1e12).toFixed(2) + 'T';
+            if (value >= 1e9) return '$' + (value / 1e9).toFixed(2) + 'B';
+            if (value >= 1e6) return '$' + (value / 1e6).toFixed(2) + 'M';
+            return '$' + value.toLocaleString();
+        }
+
+        function formatPercent(value) {
+            if (value === undefined || value === null) return 'N/A';
+            return (value >= 0 ? '+' : '') + value.toFixed(2) + '%';
+        }
+
+        function switchChartTab(tabName) {
+            currentChartTab = tabName;
+            document.querySelectorAll('.chart-tab').forEach(tab => tab.classList.remove('active'));
             event.target.classList.add('active');
 
-            // Update tab content
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
+            // Show/hide chart controls
+            const chartControls = document.getElementById('chartControls');
+            const chartView = document.getElementById('chartView');
+
+            if (tabName === 'chart') {
+                chartControls.style.display = 'flex';
+                chartView.classList.add('chart-mode');
+
+                // Load chart data if ticker is available
+                if (currentTicker && !currentChartData) {
+                    loadChartData(currentTicker);
+                } else if (chart) {
+                    // Resize chart
+                    setTimeout(() => {
+                        if (chart) chart.resize(chartView.clientWidth, chartView.clientHeight);
+                    }, 100);
+                }
+            } else {
+                chartControls.style.display = 'none';
+                chartView.classList.remove('chart-mode');
+
+                if (currentData) {
+                    updateChartView(tabName);
+                }
+            }
+        }
+
+        function showLoading(elementId) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = '<div class="loading"><div class="spinner"></div><span>Loading...</span></div>';
+        }
+
+        function updateQuickStats(data) {
+            const panel = document.getElementById('quickStats');
+            const info = data.companyInfo;
+
+            let html = `
+                <div class="data-card">
+                    <div class="data-card-title">${data.ticker}</div>
+                    <div class="data-card-value">${formatCurrency(info.price)}</div>
+                    <div class="data-card-subtitle">${info.name}</div>
+                </div>
+
+                <div class="metric-grid">
+                    <div class="metric-item">
+                        <div class="metric-label">Market Cap</div>
+                        <div class="metric-value">${formatLargeNumber(info.marketCap)}</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Sector</div>
+                        <div class="metric-value" style="font-size: 11px;">${info.sector || 'N/A'}</div>
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <div class="data-card-title">Recent Growth</div>
+            `;
+
+            if (data.salesGrowth && data.salesGrowth.length > 0) {
+                data.salesGrowth.slice(0, 3).forEach(item => {
+                    const badgeClass = item.growth >= 0 ? 'badge-positive' : 'badge-negative';
+                    html += `
+                        <div class="account-stat">
+                            <span class="account-stat-label">Sales ${item.quarter}</span>
+                            <span class="badge ${badgeClass}">${formatPercent(item.growth)}</span>
+                        </div>
+                    `;
+                });
+            }
+
+            panel.innerHTML = html;
+        }
+
+        function updateCompanyInfo(data) {
+            const panel = document.getElementById('companyInfo');
+            const info = data.companyInfo;
+
+            let html = `
+                <div class="metric-grid">
+                    <div class="metric-item">
+                        <div class="metric-label">Sector</div>
+                        <div class="metric-value" style="font-size: 12px;">${info.sector || 'N/A'}</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Industry</div>
+                        <div class="metric-value" style="font-size: 12px;">${info.industry || 'N/A'}</div>
+                    </div>
+                </div>
+            `;
+
+            panel.innerHTML = html;
+        }
+
+        function updateShortInfo(data) {
+            const panel = document.getElementById('shortInfo');
+
+            let html = `
+                <div class="metric-grid">
+                    <div class="metric-item">
+                        <div class="metric-label">Short %</div>
+                        <div class="metric-value">${data.shortInterest.shortPercentOfFloat}${data.shortInterest.shortPercentOfFloat !== 'N/A' ? '%' : ''}</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Days to Cover</div>
+                        <div class="metric-value">${data.shortInterest.daysToCover !== 'N/A' ? data.shortInterest.daysToCover.toFixed(2) : 'N/A'}</div>
+                    </div>
+                </div>
+                <div class="section-divider"></div>
+                <div class="metric-grid">
+                    <div class="metric-item">
+                        <div class="metric-label">Prev Earnings</div>
+                        <div class="metric-value" style="font-size: 11px;">${data.earningsDates.previous || 'N/A'}</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Next Earnings</div>
+                        <div class="metric-value" style="font-size: 11px;">${data.earningsDates.next || 'N/A'}</div>
+                    </div>
+                </div>
+            `;
+
+            panel.innerHTML = html;
+        }
+
+        function updateChartView(tabName) {
+            const view = document.getElementById('chartView');
+            let html = '';
+
+            if (tabName === 'overview') {
+                html = '<table class="data-table"><thead><tr><th>Quarter</th><th>Sales Growth</th><th>FCF Growth</th><th>Gross Margin</th></tr></thead><tbody>';
+
+                const maxRows = Math.max(currentData.salesGrowth.length, currentData.fcfGrowth.length, currentData.grossMargins.length);
+                for (let i = 0; i < maxRows; i++) {
+                    const sales = currentData.salesGrowth[i];
+                    const fcf = currentData.fcfGrowth[i];
+                    const margin = currentData.grossMargins[i];
+
+                    html += '<tr>';
+                    html += `<td>${sales ? sales.quarter : '-'}</td>`;
+                    html += `<td>${sales ? '<span class="badge ' + (sales.growth >= 0 ? 'badge-positive' : 'badge-negative') + '">' + formatPercent(sales.growth) + '</span>' : '-'}</td>`;
+                    html += `<td>${fcf ? '<span class="badge ' + (fcf.growth >= 0 ? 'badge-positive' : 'badge-negative') + '">' + formatPercent(fcf.growth) + '</span>' : '-'}</td>`;
+                    html += `<td>${margin ? margin.margin.toFixed(2) + '%' : '-'}</td>`;
+                    html += '</tr>';
+                }
+                html += '</tbody></table>';
+            } else if (tabName === 'growth') {
+                html = '<table class="data-table"><thead><tr><th>Quarter</th><th>Date</th><th>Revenue</th><th>YoY Growth</th></tr></thead><tbody>';
+                currentData.salesGrowth.forEach(item => {
+                    html += `<tr>
+                        <td>${item.quarter}</td>
+                        <td>${item.date}</td>
+                        <td>${formatLargeNumber(item.currentRevenue)}</td>
+                        <td><span class="badge ${item.growth >= 0 ? 'badge-positive' : 'badge-negative'}">${formatPercent(item.growth)}</span></td>
+                    </tr>`;
+                });
+                html += '</tbody></table>';
+            } else if (tabName === 'earnings') {
+                html = '<table class="data-table"><thead><tr><th>Date</th><th>Reported EPS</th><th>Estimated EPS</th><th>Surprise</th></tr></thead><tbody>';
+                currentData.earningsSurprise.forEach(item => {
+                    html += `<tr>
+                        <td>${item.date}</td>
+                        <td>${formatCurrency(item.reportedEps)}</td>
+                        <td>${formatCurrency(item.estimatedEps)}</td>
+                        <td><span class="badge ${item.surprise >= 0 ? 'badge-positive' : 'badge-negative'}">${formatPercent(item.surprise)}</span></td>
+                    </tr>`;
+                });
+                html += '</tbody></table>';
+            } else if (tabName === 'sec' && currentSecData) {
+                html = '<div style="font-size: 11px; color: #888; margin-bottom: 12px;">SEC Edgar Filings Data</div>';
+                html += '<table class="data-table"><thead><tr><th>Metric</th><th>Q1</th><th>Q2</th><th>Q3</th></tr></thead><tbody>';
+                html += '<tr><td>Sales Growth</td>';
+
+                const salesData = parseSecSection(currentSecData, 'SALES GROWTH');
+                for (let i = 0; i < 3; i++) {
+                    if (salesData[i]) {
+                        const growth = extractGrowth(salesData[i]);
+                        html += `<td><span class="badge ${growth >= 0 ? 'badge-positive' : 'badge-negative'}">${growth.toFixed(2)}%</span></td>`;
+                    } else {
+                        html += '<td>-</td>';
+                    }
+                }
+                html += '</tr>';
+
+                html += '<tr><td>Earnings Growth</td>';
+                const earningsData = parseSecSection(currentSecData, 'EARNINGS GROWTH');
+                for (let i = 0; i < 3; i++) {
+                    if (earningsData[i]) {
+                        const growth = extractGrowth(earningsData[i]);
+                        html += `<td><span class="badge ${growth >= 0 ? 'badge-positive' : 'badge-negative'}">${growth.toFixed(2)}%</span></td>`;
+                    } else {
+                        html += '<td>-</td>';
+                    }
+                }
+                html += '</tr>';
+                html += '</tbody></table>';
+            }
+
+            view.innerHTML = html;
+        }
+
+        function parseSecSection(rawData, sectionName) {
+            const lines = rawData.split('\n');
+            const data = [];
+            let inSection = false;
+
+            for (let i = 0; i < lines.length; i++) {
+                if (lines[i].includes(sectionName)) {
+                    inSection = true;
+                    continue;
+                }
+                if (inSection && lines[i].includes('====')) {
+                    break;
+                }
+                if (inSection && lines[i].trim().startsWith('Q')) {
+                    let quarterData = lines[i];
+                    i++;
+                    while (i < lines.length && lines[i].trim().startsWith('  ')) {
+                        quarterData += '\n' + lines[i];
+                        i++;
+                    }
+                    data.push(quarterData);
+                    i--;
+                }
+            }
+            return data;
+        }
+
+        function extractGrowth(quarterData) {
+            const match = quarterData.match(/yoyGrowth:\s*([-+]?\d+\.\d+)%/);
+            return match ? parseFloat(match[1]) : 0;
+        }
+
+        function updateNewsPanel(articles) {
+            const panel = document.getElementById('newsPanel');
+
+            if (!articles || articles.length === 0) {
+                panel.innerHTML = '<div class="empty-state"><div class="empty-state-text">No news available</div></div>';
+                return;
+            }
+
+            let html = '';
+            articles.slice(0, 10).forEach(article => {
+                const date = new Date(article.publishedAt).toLocaleDateString();
+                html += `
+                    <div class="news-item">
+                        <div class="news-title">
+                            <a href="${article.url}" target="_blank">${article.title}</a>
+                        </div>
+                        <div class="news-meta">${article.source} • ${date}</div>
+                    </div>
+                `;
             });
-            document.getElementById(tab + 'Content').classList.add('active');
+
+            panel.innerHTML = html;
         }
 
-        function showLoading(tab) {
-            const content = document.getElementById(tab + 'Content');
-            content.innerHTML = `
-                <div class="loading">
-                    <div class="spinner"></div>
-                    <p>Fetching data...</p>
-                </div>
-            `;
-            document.getElementById('results').classList.add('show');
-        }
-
-        function showError(tab, message) {
-            const content = document.getElementById(tab + 'Content');
-            content.innerHTML = `
-                <div class="error">
-                    <h3>Error</h3>
-                    <p>${message}</p>
-                </div>
-            `;
-        }
-
-        function showOutput(tab, data) {
-            const content = document.getElementById(tab + 'Content');
-            content.innerHTML = `<div class="output">${data}</div>`;
-        }
-
-        async function getYahooData() {
+        async function loadAllData() {
             const ticker = document.getElementById('tickerInput').value.trim().toUpperCase();
-
             if (!ticker) {
                 alert('Please enter a ticker symbol');
                 return;
             }
 
-            const yahooBtn = document.getElementById('yahooBtn');
-            yahooBtn.disabled = true;
-            yahooBtn.textContent = 'Loading...';
+            currentTicker = ticker;
 
-            showLoading('yahoo');
+            // Show loading states
+            showLoading('quickStats');
 
+            // Don't show loading for chartView if on chart tab (chart handles its own rendering)
+            if (currentChartTab !== 'chart') {
+                showLoading('chartView');
+            }
+
+            showLoading('companyInfo');
+            showLoading('shortInfo');
+            showLoading('newsPanel');
+
+            // Load Yahoo Finance data
             try {
                 const response = await fetch('http://localhost:3000/api/stock-data', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ ticker })
                 });
 
                 const result = await response.json();
-
                 if (result.success) {
-                    showOutput('yahoo', result.data);
-                } else {
-                    showError('yahoo', result.error || 'Unknown error occurred');
+                    currentData = JSON.parse(result.data);
+                    updateQuickStats(currentData);
+                    updateCompanyInfo(currentData);
+                    updateShortInfo(currentData);
+
+                    // Only update chart view if not on chart tab
+                    if (currentChartTab !== 'chart') {
+                        updateChartView(currentChartTab);
+                    }
                 }
             } catch (error) {
-                showError('yahoo', 'Failed to fetch data: ' + error.message);
-            } finally {
-                yahooBtn.disabled = false;
-                yahooBtn.textContent = 'Yahoo Finance Data';
-            }
-        }
-
-        async function getSecData() {
-            const ticker = document.getElementById('tickerInput').value.trim().toUpperCase();
-
-            if (!ticker) {
-                alert('Please enter a ticker symbol');
-                return;
+                console.error('Error loading stock data:', error);
             }
 
-            const secBtn = document.getElementById('secBtn');
-            secBtn.disabled = true;
-            secBtn.textContent = 'Loading...';
+            // Load Chart Data (for Chart tab)
+            if (currentChartTab === 'chart') {
+                await loadChartData(ticker);
+            }
 
-            showLoading('sec');
-            switchTab('sec');
+            // Load News
+            try {
+                const response = await fetch('http://localhost:3000/api/news', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ticker })
+                });
 
+                const result = await response.json();
+                if (result.success && result.articles) {
+                    updateNewsPanel(result.articles);
+                }
+            } catch (error) {
+                console.error('Error loading news:', error);
+            }
+
+            // Load SEC data
             try {
                 const response = await fetch('http://localhost:3000/api/sec-data', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ ticker })
                 });
 
                 const result = await response.json();
-
                 if (result.success) {
-                    showOutput('sec', result.data);
-                } else {
-                    showError('sec', result.error || 'Unknown error occurred');
+                    currentSecData = result.data;
+                    if (currentChartTab === 'sec') {
+                        updateChartView('sec');
+                    }
                 }
             } catch (error) {
-                showError('sec', 'Failed to fetch data: ' + error.message);
-            } finally {
-                secBtn.disabled = false;
-                secBtn.textContent = 'SEC Data';
+                console.error('Error loading SEC data:', error);
+            }
+        }
+
+        function refreshData() {
+            if (currentTicker) {
+                document.getElementById('tickerInput').value = currentTicker;
+                loadAllData();
+            }
+        }
+
+        function toggleAutoRefresh() {
+            const btn = document.getElementById('autoRefreshBtn');
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+                autoRefreshInterval = null;
+                btn.textContent = 'Auto-Refresh: OFF';
+                btn.classList.remove('active');
+            } else {
+                autoRefreshInterval = setInterval(refreshData, 60000); // Refresh every 60 seconds
+                btn.textContent = 'Auto-Refresh: ON';
+                btn.classList.add('active');
             }
         }
     </script>

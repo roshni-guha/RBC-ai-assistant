@@ -17,6 +17,12 @@ An AI-assisted research analyst tool that automates financial data collection fo
   - Earnings Growth (Y/Y) from official 10-Q filings
   - EBITDA Margins (when available)
 
+- **Financial News** (powered by NewsAPI)
+  - Latest news articles for any stock
+  - Filtered by ticker and company name
+  - Links to full articles
+  - Published dates and sources
+
 - **Web Interface**
   - Clean, modern UI
   - Real-time data fetching
@@ -30,6 +36,7 @@ Before running this application, make sure you have:
 - **Python 3.8+** installed
 - **Node.js 14+** installed
 - **npm** (comes with Node.js)
+- **NewsAPI Key** (free at [newsapi.org](https://newsapi.org/))
 
 ## Installation
 
@@ -43,7 +50,7 @@ cd RBC-ai-assistant
 ### 2. Install Python Dependencies
 
 ```bash
-pip install yfinance pandas numpy sec-edgar-downloader requests
+pip install yfinance pandas numpy sec-edgar-downloader requests newsapi-python
 ```
 
 Or if you have a `requirements.txt`:
@@ -61,6 +68,24 @@ npm install
 This will install:
 - Express.js (web server)
 - CORS (cross-origin support)
+- dotenv (environment variables)
+
+### 4. Set Up NewsAPI Key
+
+1. Get a free API key from [newsapi.org](https://newsapi.org/)
+2. Create a `.env` file in the project root:
+
+```bash
+cp .env.example .env
+```
+
+3. Edit `.env` and add your API key:
+
+```
+NEWS_API_KEY=your_api_key_here
+```
+
+**Note:** The free tier allows 100 requests per day, which is sufficient for development and testing.
 
 ## Running the Application
 
@@ -88,6 +113,7 @@ http://localhost:3000
 2. Click one of the buttons:
    - **Yahoo Finance Data** - Get real-time market data
    - **SEC Data** - Get official SEC filing data
+   - **Financial News** - Get latest news articles
 3. View results in the formatted output area
 4. Switch between tabs to compare different data sources
 
@@ -97,8 +123,11 @@ http://localhost:3000
 RBC-ai-assistant/
 ├── main.py                  # Yahoo Finance data fetcher
 ├── sec_data_fetcher.py      # SEC Edgar API data fetcher
+├── news_fetcher.py          # NewsAPI data fetcher
 ├── server.js                # Node.js Express backend
 ├── package.json             # Node.js dependencies
+├── .env.example             # Environment variable template
+├── .env                     # Your API keys (create this)
 ├── public/
 │   └── index.html          # Frontend web interface
 └── README.md               # This file
@@ -108,15 +137,17 @@ RBC-ai-assistant/
 
 ### Backend (Node.js)
 
-The Express server (`server.js`) provides two API endpoints:
+The Express server (`server.js`) provides three API endpoints:
 
 - `POST /api/stock-data` - Executes `main.py` with the provided ticker
 - `POST /api/sec-data` - Executes `sec_data_fetcher.py` with the provided ticker
+- `POST /api/news` - Executes `news_fetcher.py` with the provided ticker
 
 ### Python Scripts
 
 - **main.py**: Uses `yfinance` library to fetch data from Yahoo Finance
 - **sec_data_fetcher.py**: Uses SEC Edgar API to fetch official filing data
+- **news_fetcher.py**: Uses NewsAPI to fetch financial news articles
 
 ### Frontend
 
