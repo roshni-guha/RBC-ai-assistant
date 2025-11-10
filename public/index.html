@@ -247,6 +247,179 @@
             gap: 10px;
             flex-wrap: wrap;
         }
+
+        /* Dashboard Styles */
+        .dashboard {
+            background: #1a202c;
+            color: #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .company-info h2 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .company-info p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .price-info {
+            text-align: right;
+        }
+
+        .current-price {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        .market-cap {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 25px;
+        }
+
+        .metric-card {
+            background: #2d3748;
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .metric-card h3 {
+            color: #a0aec0;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .metric-table td {
+            padding: 8px 0;
+            border-bottom: 1px solid #4a5568;
+        }
+
+        .metric-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            color: #a0aec0;
+            font-size: 0.85rem;
+        }
+
+        .metric-value {
+            text-align: right;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .metric-value.positive {
+            color: #48bb78;
+        }
+
+        .metric-value.negative {
+            color: #f56565;
+        }
+
+        .metric-list {
+            list-style: none;
+        }
+
+        .metric-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #4a5568;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .metric-list li:last-child {
+            border-bottom: none;
+        }
+
+        .quarter-label {
+            color: #a0aec0;
+            font-size: 0.85rem;
+        }
+
+        .growth-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .growth-badge.positive {
+            background: rgba(72, 187, 120, 0.2);
+            color: #48bb78;
+        }
+
+        .growth-badge.negative {
+            background: rgba(245, 101, 101, 0.2);
+            color: #f56565;
+        }
+
+        .earnings-item {
+            background: #374151;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+
+        .earnings-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .earnings-date {
+            color: #9ca3af;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+        }
+
+        .earnings-values {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .eps-values {
+            font-size: 0.9rem;
+        }
+
+        .short-stats {
+            display: grid;
+            gap: 12px;
+        }
+
+        .short-stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: #374151;
+            border-radius: 6px;
+        }
     </style>
 </head>
 <body>
@@ -336,6 +509,166 @@
             content.innerHTML = `<div class="output">${data}</div>`;
         }
 
+        function formatCurrency(value) {
+            if (value === 'N/A' || !value) return 'N/A';
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(value);
+        }
+
+        function formatLargeNumber(value) {
+            if (value === 'N/A' || !value) return 'N/A';
+            if (value >= 1e12) return (value / 1e12).toFixed(2) + 'T';
+            if (value >= 1e9) return (value / 1e9).toFixed(2) + 'B';
+            if (value >= 1e6) return (value / 1e6).toFixed(2) + 'M';
+            return value.toLocaleString();
+        }
+
+        function showDashboard(data) {
+            const content = document.getElementById('yahooContent');
+            const info = data.companyInfo;
+
+            let html = `
+                <div class="dashboard">
+                    <div class="dashboard-header">
+                        <div class="company-info">
+                            <h2>${data.ticker}</h2>
+                            <p>${info.name}</p>
+                            <p style="font-size: 0.85rem; margin-top: 5px;">${info.sector} • ${info.industry}</p>
+                        </div>
+                        <div class="price-info">
+                            <div class="current-price">${formatCurrency(info.price)}</div>
+                            <div class="market-cap">Market Cap: ${formatLargeNumber(info.marketCap)}</div>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid">
+                        <!-- Sales Growth -->
+                        <div class="metric-card">
+                            <h3>Sales Growth (Y/Y)</h3>
+                            <ul class="metric-list">
+            `;
+
+            data.salesGrowth.forEach(item => {
+                const growthClass = item.growth >= 0 ? 'positive' : 'negative';
+                html += `
+                    <li>
+                        <span class="quarter-label">${item.quarter} (${item.date})</span>
+                        <span class="growth-badge ${growthClass}">${item.growth >= 0 ? '+' : ''}${item.growth}%</span>
+                    </li>
+                `;
+            });
+
+            html += `
+                            </ul>
+                        </div>
+
+                        <!-- FCF Growth -->
+                        <div class="metric-card">
+                            <h3>Free Cash Flow Growth (Y/Y)</h3>
+                            <ul class="metric-list">
+            `;
+
+            data.fcfGrowth.forEach(item => {
+                const growthClass = item.growth >= 0 ? 'positive' : 'negative';
+                html += `
+                    <li>
+                        <span class="quarter-label">${item.quarter}: ${formatCurrency(item.fcf)}</span>
+                        <span class="growth-badge ${growthClass}">${item.growth >= 0 ? '+' : ''}${item.growth}%</span>
+                    </li>
+                `;
+            });
+
+            html += `
+                            </ul>
+                        </div>
+
+                        <!-- Gross Margins -->
+                        <div class="metric-card">
+                            <h3>Gross Margins</h3>
+                            <ul class="metric-list">
+            `;
+
+            data.grossMargins.forEach(item => {
+                html += `
+                    <li>
+                        <span class="quarter-label">${item.quarter}</span>
+                        <span class="metric-value">${item.margin}%</span>
+                    </li>
+                `;
+            });
+
+            html += `
+                            </ul>
+                        </div>
+
+                        <!-- Earnings Surprise -->
+                        <div class="metric-card">
+                            <h3>Earnings Surprise History</h3>
+            `;
+
+            data.earningsSurprise.forEach(item => {
+                const surpriseClass = item.surprise >= 0 ? 'positive' : 'negative';
+                html += `
+                    <div class="earnings-item">
+                        <div class="earnings-date">${item.date}</div>
+                        <div class="earnings-values">
+                            <div class="eps-values">
+                                <span style="color: #9ca3af;">Reported:</span> $${item.reportedEps} |
+                                <span style="color: #9ca3af;">Estimated:</span> $${item.estimatedEps}
+                            </div>
+                            <span class="growth-badge ${surpriseClass}">${item.surprise >= 0 ? '+' : ''}${item.surprise}%</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `
+                        </div>
+
+                        <!-- Short Interest -->
+                        <div class="metric-card">
+                            <h3>Short Interest</h3>
+                            <div class="short-stats">
+                                <div class="short-stat-item">
+                                    <span class="metric-label">Short % of Float</span>
+                                    <span class="metric-value">${data.shortInterest.shortPercentOfFloat}${data.shortInterest.shortPercentOfFloat !== 'N/A' ? '%' : ''}</span>
+                                </div>
+                                <div class="short-stat-item">
+                                    <span class="metric-label">Shares Short</span>
+                                    <span class="metric-value">${typeof data.shortInterest.sharesShort === 'number' ? formatLargeNumber(data.shortInterest.sharesShort) : data.shortInterest.sharesShort}</span>
+                                </div>
+                                <div class="short-stat-item">
+                                    <span class="metric-label">Days to Cover</span>
+                                    <span class="metric-value">${data.shortInterest.daysToCover !== 'N/A' ? data.shortInterest.daysToCover.toFixed(2) : 'N/A'}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Earnings Dates -->
+                        <div class="metric-card">
+                            <h3>Earnings Dates</h3>
+                            <div class="short-stats">
+                                <div class="short-stat-item">
+                                    <span class="metric-label">Previous Earnings</span>
+                                    <span class="metric-value">${data.earningsDates.previous || 'N/A'}</span>
+                                </div>
+                                <div class="short-stat-item">
+                                    <span class="metric-label">Next Earnings</span>
+                                    <span class="metric-value">${data.earningsDates.next || 'N/A'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            content.innerHTML = html;
+        }
+
         async function getYahooData() {
             const ticker = document.getElementById('tickerInput').value.trim().toUpperCase();
 
@@ -362,7 +695,14 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    showOutput('yahoo', result.data);
+                    try {
+                        // Parse the JSON data from Python output
+                        const jsonData = JSON.parse(result.data);
+                        showDashboard(jsonData);
+                    } catch (e) {
+                        // Fallback to plain text if JSON parsing fails
+                        showOutput('yahoo', result.data);
+                    }
                 } else {
                     showError('yahoo', result.error || 'Unknown error occurred');
                 }
