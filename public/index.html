@@ -1531,7 +1531,12 @@
 
             // Show loading states
             showLoading('quickStats');
-            showLoading('chartView');
+
+            // Don't show loading for chartView if on chart tab (chart handles its own rendering)
+            if (currentChartTab !== 'chart') {
+                showLoading('chartView');
+            }
+
             showLoading('companyInfo');
             showLoading('shortInfo');
             showLoading('newsPanel');

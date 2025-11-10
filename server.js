@@ -107,7 +107,7 @@ app.post('/api/chart-data', (req, res) => {
     const intervalParam = interval || '1d';
     const periodParam = period || '1y';
 
-    // Run the chart data fetcher Python script
+    // Run the chart data fetcher Python script (using yfinance - free)
     const pythonProcess = spawn('python', ['chart_data_fetcher.py', ticker, intervalParam, periodParam], {
         stdio: ['pipe', 'pipe', 'pipe']
     });

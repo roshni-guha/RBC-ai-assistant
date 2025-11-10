@@ -35,10 +35,14 @@ def fetch_chart_data_finnhub(ticker, api_key, interval='D', days=365):
         response = requests.get(url, params=params)
         data = response.json()
 
-        if data.get('s') != 'ok':
+        # Debug: print the response
+        print(f"Finnhub API Response: {data}", file=sys.stderr)
+
+        if data.get('s') != 'ok' or not data.get('t'):
+            error_msg = data.get('error', 'No data available for this ticker')
             return {
                 'success': False,
-                'error': 'No data available for this ticker'
+                'error': error_msg
             }
 
         # Convert to candlestick format
