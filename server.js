@@ -5,147 +5,104 @@ const path = require('path');
 require('dotenv').config();
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-// API endpoint to get stock data
-app.post('/api/stock-data', (req, res) => {
+// Helper function to run Python scripts
+function runPythonScript(scriptPath, args = [], input = null) {
+    return new Promise((resolve, reject) => {
+        const pythonProcess = spawn('python', [scriptPath, ...args], {
+            stdio: ['pipe', 'pipe', 'pipe']
+        });
+
+        let outputData = '';
+        let errorData = '';
+
+        // Send input if provided
+        if (input) {
+            pythonProcess.stdin.write(input + '\n');
+            pythonProcess.stdin.end();
+        }
+
+        // Collect output
+        pythonProcess.stdout.on('data', (data) => {
+            outputData += data.toString();
+        });
+
+        pythonProcess.stderr.on('data', (data) => {
+            errorData += data.toString();
+        });
+
+        pythonProcess.on('close', (code) => {
+            if (code !== 0) {
+                reject(new Error(errorData || `Process exited with code ${code}`));
+            } else {
+                resolve(outputData);
+            }
+        });
+
+        pythonProcess.on('error', (error) => {
+            reject(new Error(`Failed to start Python: ${error.message}`));
+        });
+    });
+}
+
+// API endpoint to get Yahoo Finance stock data
+app.post('/api/stock-data', async (req, res) => {
     const { ticker } = req.body;
 
     if (!ticker) {
         return res.status(400).json({ error: 'Ticker is required' });
     }
 
-    // Run the Python script with ticker as argument
-    const pythonProcess = spawn('python', ['main.py', ticker], {
-        stdio: ['pipe', 'pipe', 'pipe']
-    });
-
-    let outputData = '';
-    let errorData = '';
-
-    // Collect output
-    pythonProcess.stdout.on('data', (data) => {
-        outputData += data.toString();
-    });
-
-    pythonProcess.stderr.on('data', (data) => {
-        errorData += data.toString();
-    });
-
-    pythonProcess.on('close', (code) => {
-        if (code !== 0) {
-            return res.status(500).json({
-                error: 'Error running Python script',
-                details: errorData
-            });
-        }
-
+    try {
+        console.log(`Fetching Yahoo Finance data for ${ticker}...`);
+        const output = await runPythonScript('main.py', [ticker]);
+        
         res.json({
             success: true,
-            data: outputData
+            data: output
         });
-    });
+    } catch (error) {
+        console.error('Error fetching stock data:', error);
+        res.status(500).json({
+            error: 'Error fetching stock data',
+            details: error.message
+        });
+    }
 });
 
 // API endpoint to get SEC data
-app.post('/api/sec-data', (req, res) => {
+app.post('/api/sec-data', async (req, res) => {
     const { ticker } = req.body;
 
     if (!ticker) {
         return res.status(400).json({ error: 'Ticker is required' });
     }
 
-    // Run the SEC Python script
-    const pythonProcess = spawn('python', ['sec_data_fetcher.py'], {
-        stdio: ['pipe', 'pipe', 'pipe']
-    });
-
-    let outputData = '';
-    let errorData = '';
-
-    // Send ticker to Python script
-    pythonProcess.stdin.write(ticker + '\n');
-    pythonProcess.stdin.end();
-
-    // Collect output
-    pythonProcess.stdout.on('data', (data) => {
-        outputData += data.toString();
-    });
-
-    pythonProcess.stderr.on('data', (data) => {
-        errorData += data.toString();
-    });
-
-    pythonProcess.on('close', (code) => {
-        if (code !== 0) {
-            return res.status(500).json({
-                error: 'Error running SEC Python script',
-                details: errorData
-            });
-        }
-
+    try {
+        console.log(`Fetching SEC data for ${ticker}...`);
+        const output = await runPythonScript('sec_data_fetcher.py', [], ticker);
+        
         res.json({
             success: true,
-            data: outputData
+            data: output
         });
-    });
-});
-
-// API endpoint to get chart data
-app.post('/api/chart-data', (req, res) => {
-    const { ticker, interval, period } = req.body;
-
-    if (!ticker) {
-        return res.status(400).json({ error: 'Ticker is required' });
+    } catch (error) {
+        console.error('Error fetching SEC data:', error);
+        res.status(500).json({
+            error: 'Error fetching SEC data',
+            details: error.message
+        });
     }
-
-    const intervalParam = interval || '1d';
-    const periodParam = period || '1y';
-
-    // Run the chart data fetcher Python script (using yfinance - free)
-    const pythonProcess = spawn('python', ['chart_data_fetcher.py', ticker, intervalParam, periodParam], {
-        stdio: ['pipe', 'pipe', 'pipe']
-    });
-
-    let outputData = '';
-    let errorData = '';
-
-    // Collect output
-    pythonProcess.stdout.on('data', (data) => {
-        outputData += data.toString();
-    });
-
-    pythonProcess.stderr.on('data', (data) => {
-        errorData += data.toString();
-    });
-
-    pythonProcess.on('close', (code) => {
-        if (code !== 0) {
-            return res.status(500).json({
-                error: 'Error fetching chart data',
-                details: errorData
-            });
-        }
-
-        try {
-            const chartData = JSON.parse(outputData);
-            res.json(chartData);
-        } catch (error) {
-            res.status(500).json({
-                error: 'Error parsing chart data',
-                details: error.message
-            });
-        }
-    });
 });
 
-// API endpoint to get news
-app.post('/api/news', (req, res) => {
+// API endpoint to get financial news
+app.post('/api/news', async (req, res) => {
     const { ticker, companyName } = req.body;
 
     if (!ticker) {
@@ -156,62 +113,83 @@ app.post('/api/news', (req, res) => {
 
     if (!apiKey) {
         return res.status(500).json({
-            error: 'NEWS_API_KEY not configured. Please add it to your .env file'
+            error: 'NEWS_API_KEY not configured. Please add it to your .env file',
+            articles: []
         });
     }
 
-    // Run the news fetcher Python script
-    const pythonProcess = spawn('python', ['-c', `
+    try {
+        console.log(`Fetching news for ${ticker}...`);
+        
+        const pythonCode = `
 from news_fetcher import NewsFetcher
 import json
 
-apiKey = "${apiKey}"
-ticker = "${ticker}"
-companyName = "${companyName || ''}"
+try:
+    apiKey = "${apiKey.replace(/"/g, '\\"')}"
+    ticker = "${ticker.replace(/"/g, '\\"')}"
+    companyName = "${(companyName || '').replace(/"/g, '\\"')}"
 
-fetcher = NewsFetcher(apiKey)
-articles = fetcher.getStockNews(ticker, companyName if companyName else None, 10)
-print(json.dumps(articles))
-    `], {
-        stdio: ['pipe', 'pipe', 'pipe']
-    });
+    fetcher = NewsFetcher(apiKey)
+    articles = fetcher.getStockNews(ticker, companyName if companyName else None, 10)
+    print(json.dumps(articles))
+except Exception as e:
+    print(json.dumps({"error": str(e)}))
+`;
 
-    let outputData = '';
-    let errorData = '';
+        const output = await runPythonScript('-c', [pythonCode]);
+        const articles = JSON.parse(output);
 
-    // Collect output
-    pythonProcess.stdout.on('data', (data) => {
-        outputData += data.toString();
-    });
-
-    pythonProcess.stderr.on('data', (data) => {
-        errorData += data.toString();
-    });
-
-    pythonProcess.on('close', (code) => {
-        if (code !== 0) {
-            return res.status(500).json({
-                error: 'Error fetching news',
-                details: errorData
-            });
+        if (articles.error) {
+            throw new Error(articles.error);
         }
 
-        try {
-            const articles = JSON.parse(outputData);
-            res.json({
-                success: true,
-                articles: articles
-            });
-        } catch (error) {
-            res.status(500).json({
-                error: 'Error parsing news data',
-                details: error.message
-            });
-        }
-    });
+        res.json({
+            success: true,
+            articles: articles
+        });
+    } catch (error) {
+        console.error('Error fetching news:', error);
+        res.json({
+            success: false,
+            error: 'Error fetching news (continuing without news data)',
+            articles: []
+        });
+    }
+});
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+    res.json({ status: 'ok', message: 'Server is running' });
+});
+
+// Serve the frontend
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Start server
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`
+╔════════════════════════════════════════════════════════╗
+║                                                        ║
+║     AI Research Analyst Server                         ║
+║                                                        ║
+║     Server running on http://localhost:${PORT}          ║
+║                                                        ║
+║     Ready to analyze stocks!                           ║
+║                                                        ║
+╚════════════════════════════════════════════════════════╝
+    `);
+});
+
+// Handle graceful shutdown
+process.on('SIGTERM', () => {
+    console.log('SIGTERM received, shutting down gracefully...');
+    process.exit(0);
+});
+
+process.on('SIGINT', () => {
+    console.log('\nSIGINT received, shutting down gracefully...');
+    process.exit(0);
 });
