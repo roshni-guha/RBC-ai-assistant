@@ -13,9 +13,10 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #1a1a1a;
             min-height: 100vh;
             padding: 20px;
+            color: #e8e8e8;
         }
 
         .container {
@@ -24,30 +25,33 @@
         }
 
         .header {
-            background: white;
+            background: #2a2a2a;
             padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
             margin-bottom: 30px;
+            border: 1px solid #3a3a3a;
         }
 
         h1 {
-            color: #667eea;
+            color: #e8e8e8;
             margin-bottom: 10px;
             font-size: 2.5em;
+            font-weight: 600;
         }
 
         .subtitle {
-            color: #666;
+            color: #a0a0a0;
             font-size: 1.1em;
         }
 
         .search-section {
-            background: white;
+            background: #2a2a2a;
             padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
             margin-bottom: 30px;
+            border: 1px solid #3a3a3a;
         }
 
         .input-group {
@@ -60,15 +64,21 @@
             flex: 1;
             padding: 15px;
             font-size: 18px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
+            background: #1a1a1a;
+            border: 1px solid #3a3a3a;
+            border-radius: 8px;
+            color: #e8e8e8;
             transition: all 0.3s;
+        }
+
+        input[type="text"]::placeholder {
+            color: #666;
         }
 
         input[type="text"]:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #5a5a5a;
+            background: #242424;
         }
 
         .btn {
@@ -76,23 +86,23 @@
             font-size: 16px;
             font-weight: 600;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s;
-            color: white;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #4a9eff;
+            color: white;
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            background: #3d8ae5;
+            transform: translateY(-1px);
         }
 
         .btn-primary:disabled {
-            opacity: 0.6;
+            opacity: 0.5;
             cursor: not-allowed;
             transform: none;
         }
@@ -100,13 +110,13 @@
         .loading {
             text-align: center;
             padding: 40px;
-            color: #667eea;
+            color: #a0a0a0;
             font-size: 1.2em;
         }
 
         .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
+            border: 4px solid #3a3a3a;
+            border-top: 4px solid #4a9eff;
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -120,12 +130,12 @@
         }
 
         .error {
-            background: #fee;
-            color: #c33;
+            background: #3a2626;
+            color: #ff8080;
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 8px;
             margin: 20px 0;
-            border-left: 4px solid #c33;
+            border: 1px solid #5a3a3a;
         }
 
         .results-container {
@@ -134,10 +144,11 @@
         }
 
         .card {
-            background: white;
+            background: #2a2a2a;
             padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            border: 1px solid #3a3a3a;
         }
 
         .card-header {
@@ -146,22 +157,22 @@
             align-items: center;
             margin-bottom: 20px;
             padding-bottom: 15px;
-            border-bottom: 2px solid #f0f0f0;
+            border-bottom: 1px solid #3a3a3a;
         }
 
         .card-title {
             font-size: 1.5em;
-            color: #333;
+            color: #e8e8e8;
             font-weight: 600;
         }
 
         .company-info {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: #2a2a2a;
+            border: 1px solid #4a9eff;
         }
 
         .company-info .card-title {
-            color: white;
+            color: #4a9eff;
         }
 
         .info-grid {
@@ -173,19 +184,21 @@
 
         .info-item {
             padding: 15px;
-            background: rgba(255,255,255,0.1);
+            background: #1a1a1a;
             border-radius: 8px;
+            border: 1px solid #3a3a3a;
         }
 
         .info-label {
             font-size: 0.9em;
-            opacity: 0.9;
+            color: #888;
             margin-bottom: 5px;
         }
 
         .info-value {
             font-size: 1.3em;
             font-weight: 600;
+            color: #e8e8e8;
         }
 
         .metrics-grid {
@@ -196,14 +209,14 @@
 
         .metric-card {
             padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            border-left: 4px solid #667eea;
+            background: #1a1a1a;
+            border-radius: 8px;
+            border: 1px solid #3a3a3a;
         }
 
         .metric-title {
             font-size: 1.1em;
-            color: #667eea;
+            color: #4a9eff;
             font-weight: 600;
             margin-bottom: 15px;
         }
@@ -212,7 +225,7 @@
             display: flex;
             justify-content: space-between;
             padding: 10px 0;
-            border-bottom: 1px solid #e0e0e0;
+            border-bottom: 1px solid #3a3a3a;
         }
 
         .metric-row:last-child {
@@ -220,21 +233,21 @@
         }
 
         .metric-label {
-            color: #666;
+            color: #a0a0a0;
             font-weight: 500;
         }
 
         .metric-value {
             font-weight: 600;
-            color: #333;
+            color: #e8e8e8;
         }
 
         .positive {
-            color: #10b981;
+            color: #5fb865;
         }
 
         .negative {
-            color: #ef4444;
+            color: #e87c7c;
         }
 
         .news-section {
@@ -243,22 +256,22 @@
 
         .news-item {
             padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
+            background: #1a1a1a;
+            border-radius: 8px;
             margin-bottom: 15px;
             transition: all 0.3s;
-            border-left: 4px solid #667eea;
+            border: 1px solid #3a3a3a;
         }
 
         .news-item:hover {
-            background: #e9ecef;
-            transform: translateX(5px);
+            background: #242424;
+            border-color: #4a4a4a;
         }
 
         .news-title {
             font-size: 1.1em;
             font-weight: 600;
-            color: #333;
+            color: #e8e8e8;
             margin-bottom: 10px;
         }
 
@@ -266,18 +279,18 @@
             display: flex;
             gap: 15px;
             font-size: 0.9em;
-            color: #666;
+            color: #888;
             margin-bottom: 10px;
         }
 
         .news-description {
-            color: #555;
+            color: #a0a0a0;
             line-height: 1.5;
             margin-bottom: 10px;
         }
 
         .news-link {
-            color: #667eea;
+            color: #4a9eff;
             text-decoration: none;
             font-weight: 600;
         }
@@ -289,24 +302,27 @@
         .badge {
             display: inline-block;
             padding: 4px 12px;
-            border-radius: 20px;
+            border-radius: 6px;
             font-size: 0.85em;
             font-weight: 600;
         }
 
         .badge-success {
-            background: #d1fae5;
-            color: #065f46;
+            background: #2d4a2d;
+            color: #5fb865;
+            border: 1px solid #3a5a3a;
         }
 
         .badge-danger {
-            background: #fee2e2;
-            color: #991b1b;
+            background: #4a2d2d;
+            color: #e87c7c;
+            border: 1px solid #5a3a3a;
         }
 
         .badge-info {
-            background: #dbeafe;
-            color: #1e40af;
+            background: #2d3a4a;
+            color: #4a9eff;
+            border: 1px solid #3a4a5a;
         }
 
         .tabs {
@@ -317,18 +333,24 @@
 
         .tab {
             padding: 12px 24px;
-            background: #f0f0f0;
-            border: none;
+            background: #1a1a1a;
+            border: 1px solid #3a3a3a;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
-            color: #666;
+            color: #a0a0a0;
             transition: all 0.3s;
         }
 
+        .tab:hover {
+            background: #242424;
+            color: #e8e8e8;
+        }
+
         .tab.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: #2a2a2a;
+            border-color: #4a9eff;
+            color: #4a9eff;
         }
 
         .tab-content {
@@ -361,7 +383,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🔍 AI Research Analyst</h1>
+            <h1>AI Research Analyst</h1>
             <p class="subtitle">Automated Financial Analysis & Investment Research</p>
         </div>
 
@@ -680,12 +702,146 @@
                 return '<p>SEC filing data not available for this ticker</p>';
             }
 
-            return `
-                <div class="metric-card">
-                    <div class="metric-title">📄 SEC Filing Data</div>
-                    <pre style="background: #f8f9fa; padding: 15px; border-radius: 8px; overflow-x: auto;">${secData}</pre>
-                </div>
-            `;
+            // Parse the SEC data text into structured format
+            let html = '<div class="metrics-grid">';
+            
+            // Try to extract structured data from the text
+            const lines = secData.split('\n');
+            let currentSection = '';
+            let sectionData = {};
+            
+            lines.forEach(line => {
+                line = line.trim();
+                
+                // Detect section headers
+                if (line.includes('SALES GROWTH Y/Y')) {
+                    currentSection = 'sales';
+                    sectionData.sales = [];
+                } else if (line.includes('EARNINGS GROWTH Y/Y')) {
+                    currentSection = 'earnings';
+                    sectionData.earnings = [];
+                } else if (line.includes('EBITDA MARGINS')) {
+                    currentSection = 'ebitda';
+                    sectionData.ebitda = [];
+                } else if (line.includes('Q') && line.includes('FY') && currentSection) {
+                    // This is a quarter entry
+                    sectionData[currentSection].push({ header: line, details: [] });
+                } else if (line && currentSection && sectionData[currentSection].length > 0) {
+                    // This is detail data for the current quarter
+                    const lastEntry = sectionData[currentSection][sectionData[currentSection].length - 1];
+                    lastEntry.details.push(line);
+                }
+            });
+
+            // Create Sales Growth Card
+            if (sectionData.sales && sectionData.sales.length > 0) {
+                html += `
+                    <div class="metric-card">
+                        <div class="metric-title">📈 Sales Growth Y/Y (SEC Filings)</div>
+                        ${sectionData.sales.map(quarter => {
+                            const details = quarter.details.filter(d => d);
+                            const dateMatch = details.find(d => d.includes('date:'));
+                            const currentMatch = details.find(d => d.includes('currentRevenue:'));
+                            const priorMatch = details.find(d => d.includes('priorYearRevenue:'));
+                            const growthMatch = details.find(d => d.includes('yoyGrowth:'));
+                            
+                            return `
+                                <div style="margin-bottom: 15px; padding: 12px; background: #2a2a2a; border-radius: 6px;">
+                                    <div style="color: #4a9eff; font-weight: 600; margin-bottom: 8px;">${quarter.header}</div>
+                                    ${dateMatch ? `<div style="font-size: 0.9em; color: #888; margin-bottom: 5px;">${dateMatch}</div>` : ''}
+                                    ${currentMatch ? `<div style="color: #a0a0a0;">${currentMatch}</div>` : ''}
+                                    ${priorMatch ? `<div style="color: #a0a0a0;">${priorMatch}</div>` : ''}
+                                    ${growthMatch ? `
+                                        <div style="margin-top: 5px;">
+                                            <span style="color: #888;">Growth: </span>
+                                            <span style="font-weight: 600; color: ${growthMatch.includes('-') ? '#e87c7c' : '#5fb865'};">
+                                                ${growthMatch.replace('yoyGrowth:', '').trim()}
+                                            </span>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+            }
+
+            // Create Earnings Growth Card
+            if (sectionData.earnings && sectionData.earnings.length > 0) {
+                html += `
+                    <div class="metric-card">
+                        <div class="metric-title">💰 Earnings Growth Y/Y (SEC Filings)</div>
+                        ${sectionData.earnings.map(quarter => {
+                            const details = quarter.details.filter(d => d);
+                            const dateMatch = details.find(d => d.includes('date:'));
+                            const currentMatch = details.find(d => d.includes('currentEarnings:'));
+                            const priorMatch = details.find(d => d.includes('priorYearEarnings:'));
+                            const growthMatch = details.find(d => d.includes('yoyGrowth:'));
+                            
+                            return `
+                                <div style="margin-bottom: 15px; padding: 12px; background: #2a2a2a; border-radius: 6px;">
+                                    <div style="color: #4a9eff; font-weight: 600; margin-bottom: 8px;">${quarter.header}</div>
+                                    ${dateMatch ? `<div style="font-size: 0.9em; color: #888; margin-bottom: 5px;">${dateMatch}</div>` : ''}
+                                    ${currentMatch ? `<div style="color: #a0a0a0;">${currentMatch}</div>` : ''}
+                                    ${priorMatch ? `<div style="color: #a0a0a0;">${priorMatch}</div>` : ''}
+                                    ${growthMatch ? `
+                                        <div style="margin-top: 5px;">
+                                            <span style="color: #888;">Growth: </span>
+                                            <span style="font-weight: 600; color: ${growthMatch.includes('-') ? '#e87c7c' : '#5fb865'};">
+                                                ${growthMatch.replace('yoyGrowth:', '').trim()}
+                                            </span>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+            }
+
+            // Create EBITDA Card if available
+            if (sectionData.ebitda && sectionData.ebitda.length > 0) {
+                html += `
+                    <div class="metric-card">
+                        <div class="metric-title">📊 EBITDA Margins (SEC Filings)</div>
+                        ${sectionData.ebitda.map(quarter => {
+                            const details = quarter.details.filter(d => d).join('<br>');
+                            return `
+                                <div style="margin-bottom: 15px; padding: 12px; background: #2a2a2a; border-radius: 6px;">
+                                    <div style="color: #4a9eff; font-weight: 600; margin-bottom: 8px;">${quarter.header}</div>
+                                    <div style="color: #a0a0a0; font-size: 0.9em;">${details}</div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+            } else {
+                // Check if there's a note about EBITDA
+                const hasEbitdaNote = secData.includes('EBITDA data not');
+                if (hasEbitdaNote) {
+                    html += `
+                        <div class="metric-card">
+                            <div class="metric-title">📊 EBITDA Margins</div>
+                            <div style="padding: 12px; background: #2a2a2a; border-radius: 6px; color: #a0a0a0;">
+                                EBITDA data not directly available in SEC filings. This metric may need to be calculated from other line items.
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            // If no structured data was found, show a formatted raw view
+            if (Object.keys(sectionData).length === 0) {
+                html += `
+                    <div class="metric-card" style="grid-column: 1 / -1;">
+                        <div class="metric-title">📄 SEC Filing Data</div>
+                        <div style="padding: 15px; background: #1a1a1a; border-radius: 8px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 0.9em; line-height: 1.6; color: #a0a0a0; white-space: pre-wrap;">${secData}</div>
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+            return html;
         }
 
         function createNewsSection(newsData) {
