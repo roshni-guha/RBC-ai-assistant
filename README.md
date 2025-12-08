@@ -1,78 +1,79 @@
-# AI Research Analyst
+# 🔍 AI Research Analyst
 
-An AI-assisted research analyst tool that automates financial data collection for investment research. Input a ticker symbol and get comprehensive financial metrics from both Yahoo Finance and SEC filings.
+An AI-assisted research analyst tool that automates financial data collection for investment research. Input a ticker symbol and get comprehensive financial metrics from Yahoo Finance, SEC filings, and financial news sources.
 
-## Features
+## ✨ Features
 
-- **Yahoo Finance Data**
-  - Sales Growth (Y/Y) - Last 3 quarters
-  - Free Cash Flow Growth (Y/Y) - Last 4 quarters
-  - Gross Margins - Last 4 quarters
-  - Earnings Surprise History - Last 4 earnings
-  - Short Interest metrics
-  - Earnings Dates (previous & next)
+### Yahoo Finance Data
+- **Sales Growth (Y/Y)** - Last 3 quarters with comparative analysis
+- **Free Cash Flow Growth** - Last 4 quarters with growth percentages
+- **Gross Margins** - Last 4 quarters profitability metrics
+- **Earnings Surprise History** - Last 4 earnings vs. estimates
+- **Short Interest** - Current short positions and metrics
+- **Earnings Dates** - Previous and next earnings release dates
 
-- **SEC Filing Data**
-  - Sales Growth (Y/Y) from official 10-Q filings
-  - Earnings Growth (Y/Y) from official 10-Q filings
-  - EBITDA Margins (when available)
+### SEC Filing Data
+- Official 10-Q filing data directly from SEC Edgar
+- Sales Growth (Y/Y) from official filings
+- Earnings Growth (Y/Y) from official filings
+- EBITDA Margins (when available)
 
-- **Financial News** (powered by NewsAPI)
-  - Latest news articles for any stock
-  - Filtered by ticker and company name
-  - Links to full articles
-  - Published dates and sources
+### Financial News
+- Latest news articles for any stock (powered by NewsAPI)
+- Filtered by ticker symbol and company name
+- Full article links with publication dates
+- Source attribution and author information
 
-- **Web Interface**
-  - Clean, modern UI
-  - Real-time data fetching
-  - Tabbed interface for different data sources
-  - Mobile responsive design
+### Modern Web Interface
+- Clean, professional gradient design
+- Real-time data fetching with loading indicators
+- Tabbed interface for organized data viewing
+- Mobile responsive layout
+- Error handling and user-friendly messages
 
-## Prerequisites
+## Quick Start
 
-Before running this application, make sure you have:
+### Prerequisites
 
-- **Python 3.8+** installed
-- **Node.js 14+** installed
+Before you begin, ensure you have the following installed:
+
+- **Python 3.8+** ([Download](https://www.python.org/downloads/))
+- **Node.js 14+** ([Download](https://nodejs.org/))
 - **npm** (comes with Node.js)
-- **NewsAPI Key** (free at [newsapi.org](https://newsapi.org/))
 
-## Installation
+### Installation
 
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/roshni-guha/RBC-ai-assistant.git
-cd RBC-ai-assistant
-```
-
-### 2. Install Python Dependencies
-
-```bash
-pip install yfinance pandas numpy sec-edgar-downloader requests newsapi-python
-```
-
-Or if you have a `requirements.txt`:
+#### 1. Install Python Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Install Node.js Dependencies
+This installs:
+- `yfinance` - Yahoo Finance data
+- `pandas` - Data manipulation
+- `numpy` - Numerical operations
+- `sec-edgar-downloader` - SEC filing access
+- `requests` - HTTP requests
+- `newsapi-python` - News API integration
+
+#### 2. Install Node.js Dependencies
 
 ```bash
 npm install
 ```
 
-This will install:
-- Express.js (web server)
-- CORS (cross-origin support)
-- dotenv (environment variables)
+This installs:
+- `express` - Web server framework
+- `cors` - Cross-origin support
+- `dotenv` - Environment variable management
 
-### 4. Set Up NewsAPI Key
+#### 3. Set Up NewsAPI Key (Optional but Recommended)
 
-1. Get a free API key from [newsapi.org](https://newsapi.org/)
+1. Get a **free** API key from [newsapi.org](https://newsapi.org/)
+   - Free tier: 100 requests/day
+   - Perfect for development and testing
+
 2. Create a `.env` file in the project root:
 
 ```bash
@@ -82,50 +83,62 @@ cp .env.example .env
 3. Edit `.env` and add your API key:
 
 ```
-NEWS_API_KEY=your_api_key_here
+NEWS_API_KEY=your_actual_api_key_here
+PORT=3000
 ```
 
-**Note:** The free tier allows 100 requests per day, which is sufficient for development and testing.
+**Note:** The application will work without news data if no API key is provided.
 
-## Running the Application
+## Usage
 
-### Start the Server
+### Starting the Server
 
 ```bash
 npm start
 ```
 
 You should see:
+
 ```
-Server running on http://localhost:3000
+╔════════════════════════════════════════════════════════╗
+║                                                        ║
+║     AI Research Analyst Server                         ║
+║                                                        ║
+║     Server running on http://localhost:3000            ║
+║                                                        ║
+║     Ready to analyze stocks!                           ║
+║                                                        ║
+╚════════════════════════════════════════════════════════╝
 ```
 
-### Access the Web Interface
+### Accessing the Application
 
-Open your browser and navigate to:
-```
-http://localhost:3000
-```
+1. Open your browser
+2. Navigate to: `http://localhost:3000`
+3. Enter a ticker symbol (e.g., `AAPL`, `MSFT`, `PLTR`, `TSLA`)
+4. Click "Analyze Stock"
 
-### Using the Application
+### Example Tickers to Try
 
-1. Enter a ticker symbol in the search box (e.g., `AAPL`, `PLTR`, `MSFT`)
-2. Click one of the buttons:
-   - **Yahoo Finance Data** - Get real-time market data
-   - **SEC Data** - Get official SEC filing data
-   - **Financial News** - Get latest news articles
-3. View results in the formatted output area
-4. Switch between tabs to compare different data sources
+- **AAPL** - Apple Inc.
+- **MSFT** - Microsoft Corporation
+- **GOOGL** - Alphabet Inc. (Google)
+- **TSLA** - Tesla Inc.
+- **META** - Meta Platforms (Facebook)
+- **AMZN** - Amazon.com Inc.
+- **NVDA** - NVIDIA Corporation
+- **PLTR** - Palantir Technologies
 
 ## Project Structure
 
 ```
-RBC-ai-assistant/
+ai-research-analyst/
 ├── main.py                  # Yahoo Finance data fetcher
 ├── sec_data_fetcher.py      # SEC Edgar API data fetcher
 ├── news_fetcher.py          # NewsAPI data fetcher
-├── server.js                # Node.js Express backend
+├── server.js                # Express.js backend server
 ├── package.json             # Node.js dependencies
+├── requirements.txt         # Python dependencies
 ├── .env.example             # Environment variable template
 ├── .env                     # Your API keys (create this)
 ├── public/
@@ -135,118 +148,214 @@ RBC-ai-assistant/
 
 ## How It Works
 
-### Backend (Node.js)
+### Backend Architecture
 
-The Express server (`server.js`) provides three API endpoints:
+**Express.js Server** (`server.js`)
+- Provides REST API endpoints
+- Manages Python script execution
+- Handles cross-origin requests
+- Serves static frontend files
 
-- `POST /api/stock-data` - Executes `main.py` with the provided ticker
-- `POST /api/sec-data` - Executes `sec_data_fetcher.py` with the provided ticker
-- `POST /api/news` - Executes `news_fetcher.py` with the provided ticker
+**API Endpoints:**
+- `POST /api/stock-data` - Yahoo Finance metrics
+- `POST /api/sec-data` - SEC filing data
+- `POST /api/news` - Financial news articles
+- `GET /api/health` - Server health check
 
 ### Python Scripts
 
-- **main.py**: Uses `yfinance` library to fetch data from Yahoo Finance
-- **sec_data_fetcher.py**: Uses SEC Edgar API to fetch official filing data
-- **news_fetcher.py**: Uses NewsAPI to fetch financial news articles
+1. **main.py** - Yahoo Finance Integration
+   - Uses `yfinance` library
+   - Fetches real-time market data
+   - Calculates growth metrics
+   - Handles earnings data
+
+2. **sec_data_fetcher.py** - SEC Edgar API
+   - Accesses official SEC filings
+   - Parses 10-Q quarterly reports
+   - Extracts financial metrics
+   - Provides year-over-year comparisons
+
+3. **news_fetcher.py** - News Integration
+   - NewsAPI integration
+   - Filters relevant articles
+   - Formats publication data
+   - Handles API rate limits
 
 ### Frontend
 
-A single-page HTML application with:
-- Clean, gradient UI design
-- Real-time API calls to the backend
+**Single-Page Application** (`public/index.html`)
+- Vanilla JavaScript (no frameworks needed)
+- Responsive CSS with modern gradients
+- Tabbed interface for data organization
+- Real-time API communication
 - Loading states and error handling
-- Tabbed interface for different data sources
 
-## Supported Tickers
+## Available Metrics
 
-The SEC data fetcher has built-in support for these tickers:
-- AAPL (Apple)
-- MSFT (Microsoft)
-- GOOGL/GOOG (Google)
-- TSLA (Tesla)
-- META (Facebook/Meta)
-- AMZN (Amazon)
-- NVDA (Nvidia)
-- PLTR (Palantir)
+### Fundamentals Tab
+- Sales Growth Y/Y (last 3 quarters)
+- Free Cash Flow Growth (last 4 quarters)
+- Gross Margins (last 4 quarters)
+- Short Interest metrics
 
-To add more tickers, edit the `cikMapping` dictionary in `sec_data_fetcher.py`.
+### Earnings Tab
+- Earnings Surprise History
+- Reported vs. Estimated EPS
+- Surprise percentage calculations
 
-## Troubleshooting
+### SEC Filings Tab
+- Official filing data
+- Revenue from 10-Q reports
+- Earnings from official sources
+- EBITDA margins (when available)
+
+### News Tab
+- Recent financial news articles
+- Source and publication date
+- Article descriptions
+- Direct links to full articles
+
+## 🛠️ Troubleshooting
 
 ### Port Already in Use
 
-If port 3000 is already in use, edit `server.js` and change:
+If port 3000 is occupied, change it in `.env`:
+
+```
+PORT=8080
+```
+
+### Python Command Not Found
+
+Try using `python3` instead. Update `server.js`:
+
 ```javascript
-const PORT = 3000;
+const pythonProcess = spawn('python3', [scriptPath, ...args]);
 ```
-to another port number.
-
-### Python Not Found
-
-Make sure Python is in your PATH. Try:
-```bash
-python --version
-# or
-python3 --version
-```
-
-If using `python3`, update `server.js` to use `python3` instead of `python`.
 
 ### Module Not Found Errors
 
-Make sure all Python packages are installed:
+Reinstall Python packages:
+
 ```bash
-pip install yfinance pandas numpy sec-edgar-downloader requests
+pip install --force-reinstall -r requirements.txt
 ```
 
 ### SEC Data Not Available
 
-Some companies may not have their CIK mapped. To add a new ticker:
+Some tickers need CIK mapping. To add a new ticker:
 
-1. Find the company's CIK at [sec.gov](https://www.sec.gov/edgar/searchedgar/companysearch.html)
-2. Add it to the `cikMapping` dictionary in `sec_data_fetcher.py`
+1. Find CIK at [sec.gov](https://www.sec.gov/edgar/searchedgar/companysearch.html)
+2. Edit `sec_data_fetcher.py`:
+
+```python
+cikMapping = {
+    'YOUR_TICKER': '0000123456',  # Add your ticker here
+    # ... existing mappings
+}
+```
+
+### News API Issues
+
+- **Rate Limit:** Free tier = 100 requests/day
+- **No Key:** App works without news, just shows no articles
+- **Invalid Key:** Check `.env` file for typos
+
+### CORS Errors
+
+Make sure the server is running on `localhost:3000` and you're accessing the frontend from the same origin.
 
 ## Development
 
-### Running Python Scripts Standalone
+### Running in Development Mode
 
-You can also run the Python scripts directly:
+For automatic server restarts on file changes:
 
 ```bash
-# Yahoo Finance data
-python main.py
-
-# SEC data
-python sec_data_fetcher.py
+npm run dev
 ```
 
-### Stopping the Server
+### Testing Python Scripts Standalone
 
-Press `Ctrl+C` in the terminal where the server is running.
+You can test individual Python scripts:
+
+```bash
+# Test Yahoo Finance data
+python main.py AAPL
+
+# Test SEC data
+python sec_data_fetcher.py
+# Then enter ticker when prompted
+
+# Test news fetcher
+python news_fetcher.py
+# Follow the prompts
+```
+
+### Debugging
+
+1. Check browser console (F12) for frontend errors
+2. Check terminal for backend/Python errors
+3. Test API endpoints with curl:
+
+```bash
+# Test Yahoo Finance endpoint
+curl -X POST http://localhost:3000/api/stock-data \
+  -H "Content-Type: application/json" \
+  -d '{"ticker":"AAPL"}'
+
+# Test health check
+curl http://localhost:3000/api/health
+```
 
 ## Future Enhancements
 
-- Add more SEC metrics (EBITDA, operating margins, etc.)
-- Export data to CSV/Excel
-- Historical trend charts
-- Save favorite tickers
-- Comparison between multiple stocks
-- Database integration for caching
-- User authentication
-- API rate limiting
+Potential features to add:
+
+- [ ] More SEC metrics (EBITDA, operating margins)
+- [ ] Export data to CSV/Excel
+- [ ] Historical trend charts
+- [ ] Comparison between multiple stocks
+- [ ] Database integration for caching
+- [ ] User authentication and saved searches
+- [ ] API rate limiting and request queuing
+- [ ] Analyst estimates for future quarters
+- [ ] Social sentiment analysis (Twitter/Reddit)
+- [ ] Real-time stock price updates
+- [ ] Custom metric calculations
+- [ ] PDF report generation
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! To contribute:
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
 
 ## License
 
-ISC
+ISC License - See LICENSE file for details
 
-## Contact
+## Support
 
-For questions or issues, please open an issue on GitHub.
+For questions, issues, or feature requests:
+- Open an issue on GitHub
+- Check existing issues for solutions
+- Review troubleshooting section above
+
+## Acknowledgments
+
+Built with:
+- Python & yfinance library
+- Node.js & Express
+- SEC Edgar API
+- NewsAPI
+- Yahoo Finance API
 
 ---
 
-Built with Python, Node.js, Express, and Yahoo Finance API
+**Happy Analyzing!**
