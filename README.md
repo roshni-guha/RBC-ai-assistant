@@ -1,8 +1,8 @@
-# 🔍 AI Research Analyst
+#  AI Research Analyst
 
 An AI-assisted research analyst tool that automates financial data collection for investment research. Input a ticker symbol and get comprehensive financial metrics from Yahoo Finance, SEC filings, and financial news sources.
 
-## ✨ Features
+## Features
 
 ### Yahoo Finance Data
 - **Sales Growth (Y/Y)** - Last 3 quarters with comparative analysis
@@ -118,34 +118,6 @@ You should see:
 3. Enter a ticker symbol (e.g., `AAPL`, `MSFT`, `PLTR`, `TSLA`)
 4. Click "Analyze Stock"
 
-### Example Tickers to Try
-
-- **AAPL** - Apple Inc.
-- **MSFT** - Microsoft Corporation
-- **GOOGL** - Alphabet Inc. (Google)
-- **TSLA** - Tesla Inc.
-- **META** - Meta Platforms (Facebook)
-- **AMZN** - Amazon.com Inc.
-- **NVDA** - NVIDIA Corporation
-- **PLTR** - Palantir Technologies
-
-## Project Structure
-
-```
-ai-research-analyst/
-├── main.py                  # Yahoo Finance data fetcher
-├── sec_data_fetcher.py      # SEC Edgar API data fetcher
-├── news_fetcher.py          # NewsAPI data fetcher
-├── server.js                # Express.js backend server
-├── package.json             # Node.js dependencies
-├── requirements.txt         # Python dependencies
-├── .env.example             # Environment variable template
-├── .env                     # Your API keys (create this)
-├── public/
-│   └── index.html          # Frontend web interface
-└── README.md               # This file
-```
-
 ## How It Works
 
 ### Backend Architecture
@@ -216,7 +188,7 @@ ai-research-analyst/
 - Article descriptions
 - Direct links to full articles
 
-## 🛠️ Troubleshooting
+##  Troubleshooting
 
 ### Port Already in Use
 
