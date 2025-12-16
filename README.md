@@ -2,35 +2,6 @@
 
 An AI-assisted research analyst tool that automates financial data collection for investment research. Input a ticker symbol and get comprehensive financial metrics from Yahoo Finance, SEC filings, and financial news sources.
 
-## Features
-
-### Yahoo Finance Data
-- **Sales Growth (Y/Y)** - Last 3 quarters with comparative analysis
-- **Free Cash Flow Growth** - Last 4 quarters with growth percentages
-- **Gross Margins** - Last 4 quarters profitability metrics
-- **Earnings Surprise History** - Last 4 earnings vs. estimates
-- **Short Interest** - Current short positions and metrics
-- **Earnings Dates** - Previous and next earnings release dates
-
-### SEC Filing Data
-- Official 10-Q filing data directly from SEC Edgar
-- Sales Growth (Y/Y) from official filings
-- Earnings Growth (Y/Y) from official filings
-- EBITDA Margins (when available)
-
-### Financial News
-- Latest news articles for any stock (powered by NewsAPI)
-- Filtered by ticker symbol and company name
-- Full article links with publication dates
-- Source attribution and author information
-
-### Modern Web Interface
-- Clean, professional gradient design
-- Real-time data fetching with loading indicators
-- Tabbed interface for organized data viewing
-- Mobile responsive layout
-- Error handling and user-friendly messages
-
 ## Quick Start
 
 ### Prerequisites
@@ -117,6 +88,36 @@ You should see:
 2. Navigate to: `http://localhost:3000`
 3. Enter a ticker symbol (e.g., `AAPL`, `MSFT`, `PLTR`, `TSLA`)
 4. Click "Analyze Stock"
+
+
+## Features
+
+### Yahoo Finance Data
+- **Sales Growth (Y/Y)** - Last 3 quarters with comparative analysis
+- **Free Cash Flow Growth** - Last 4 quarters with growth percentages
+- **Gross Margins** - Last 4 quarters profitability metrics
+- **Earnings Surprise History** - Last 4 earnings vs. estimates
+- **Short Interest** - Current short positions and metrics
+- **Earnings Dates** - Previous and next earnings release dates
+
+### SEC Filing Data
+- Official 10-Q filing data directly from SEC Edgar
+- Sales Growth (Y/Y) from official filings
+- Earnings Growth (Y/Y) from official filings
+- EBITDA Margins (when available)
+
+### Financial News
+- Latest news articles for any stock (powered by NewsAPI)
+- Filtered by ticker symbol and company name
+- Full article links with publication dates
+- Source attribution and author information
+
+### Modern Web Interface
+- Clean, professional gradient design
+- Real-time data fetching with loading indicators
+- Tabbed interface for organized data viewing
+- Mobile responsive layout
+- Error handling and user-friendly messages
 
 ## How It Works
 
@@ -280,54 +281,5 @@ curl -X POST http://localhost:3000/api/stock-data \
 # Test health check
 curl http://localhost:3000/api/health
 ```
-
-## Future Enhancements
-
-Potential features to add:
-
-- [ ] More SEC metrics (EBITDA, operating margins)
-- [ ] Export data to CSV/Excel
-- [ ] Historical trend charts
-- [ ] Comparison between multiple stocks
-- [ ] Database integration for caching
-- [ ] User authentication and saved searches
-- [ ] API rate limiting and request queuing
-- [ ] Analyst estimates for future quarters
-- [ ] Social sentiment analysis (Twitter/Reddit)
-- [ ] Real-time stock price updates
-- [ ] Custom metric calculations
-- [ ] PDF report generation
-
-## Contributing
-
-Contributions are welcome! To contribute:
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## License
-
-ISC License - See LICENSE file for details
-
-## Support
-
-For questions, issues, or feature requests:
-- Open an issue on GitHub
-- Check existing issues for solutions
-- Review troubleshooting section above
-
-## Acknowledgments
-
-Built with:
-- Python & yfinance library
-- Node.js & Express
-- SEC Edgar API
-- NewsAPI
-- Yahoo Finance API
-
----
 
 **Happy Analyzing!**
